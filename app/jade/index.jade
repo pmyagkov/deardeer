@@ -1,0 +1,35 @@
+html
+    head
+        meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
+        meta(charset="utf-8")
+        title Dear Deer Art
+        link(rel='stylesheet', type='text/css', href="http://fonts.googleapis.com/css?family=Neucha&subset=latin,cyrillic")
+        link(rel="stylesheet", type="text/css", href="styl/main.css")
+        link(rel="stylesheet", type="text/css", href="http://fonts.googleapis.com/css?family=Philosopher|Marck+Script|Oranienbaum|Lobster|EB+Garamond|Marmelad&subset=cyrillic")
+
+    body
+        .aside
+            .logo
+
+            ul.navigation
+                li
+                    a.anchor(href="#stories") Цветочные истории
+                li
+                    a.anchor(href="#about") О мастерской
+                li
+                    a.anchor(href="#contacts") Контакты
+
+        .main
+            .main-inner
+                .content
+                    | @@include('./stories.html')
+
+        script(type="text/javascript", src="bower_components/jquery/dist/jquery.min.js")
+        script(type="text/javascript", src="bower_components/es5-shim/es5-shim.min.js")
+        script(type="text/javascript", src="bower_components/lodash/dist/lodash.min.js")
+        script(type="text/javascript", src="js/lib/finch.min.js")
+
+        script(type="text/javascript", src="js/main.js")
+
+
+

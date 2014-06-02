@@ -1,0 +1,132 @@
+$aside_width = 20em
+$edge_width = 50px
+
+$mail_color = black
+
+body
+  font-size: 16px
+  margin: 0
+  background-image: url("../images/wood/0.jpg")
+  overflow: hidden
+  white-space: nowrap
+
+a
+  color: black
+
+.anchor
+  text-decoration: none
+
+.aside
+  width: $aside_width
+  height: 100%
+  background: rgba(#fff, 0.2)
+  //background-repeat: repeat-y
+  position: relative
+  display: block
+
+  /*&::before
+    content: ''
+    position: absolute
+    top:0
+    left: 0
+    bottom: 0
+    right: 0
+
+    background: rgba(#fff, 0.2)
+*/
+
+.logo
+  width: 100%
+  height: 30%
+  margin: $edge_width auto
+  background: url("../images/logo.png") no-repeat 50% 50%
+  background-size: contain
+
+.navigation
+  padding: 0
+  margin: 30px auto
+  font-size: 1.5em
+  font-family: 'Neucha', cursive
+
+
+  font-family: 'Marck Script', cursive;
+  font-family: 'Oranienbaum', serif;
+  font-family: 'Lobster', cursive;
+  font-family: 'EB Garamond', serif;
+  font-family: 'Marmelad', sans-serif;
+  font-family: 'Philosopher', sans-serif
+
+
+  li
+    margin-bottom: 1em
+    display: block
+    width: 100%
+    text-align: center
+    //text-shadow: 1px 1px 5px rgb(129, 70, 37)
+
+    /*&:nth-child(1)
+      font-family: 'Philosopher', sans-serif
+    &:nth-child(2)
+      font-family: 'Marck Script', cursive
+    &:nth-child(3)
+      font-family: 'Oranienbaum', cursive*/
+
+.main
+  position: absolute
+  left: $aside_width
+  right: 0
+  bottom: 0
+  top: 0
+
+  display: block
+
+  padding: 50px 50px 50px 0
+
+  .main-inner
+    box-shadow: inset 1px 1px 9px 1px rgba(0,0,0,0.8)
+    position: absolute
+    left: 0
+    bottom: $edge_width
+    top: $edge_width
+    right: $edge_width
+
+    &::before
+      content: ''
+      position: absolute
+      top: 0
+      right: 0
+      bottom: 0
+      left: 0
+
+      background-color: rgba(#fff, 0.7)
+
+  .content
+    position: relative
+    height: 100%
+
+    &::after
+      content: ''
+      position: absolute
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
+      box-shadow: inset 1px 1px 1px 1px rgba(#000, 0.4)
+
+.stories
+  height: 100%
+  position: relative
+
+.story
+  position: absolute
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+
+  background: url("../images/photos/1.jpg");
+  background-size: cover
+  background-position: 50%
+
+.page
+  display: none
