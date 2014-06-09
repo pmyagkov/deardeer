@@ -40,7 +40,7 @@ gulp.task('html', function() {
 
 gulp.task('watch', function() {
     gulp.watch(paths.styl.glob, ['styl']);
-    gulp.watch(paths.jade.glob, ['html']);
+    gulp.watch([paths.jade.glob, 'app/images/*.svg'], ['html']);
     gulp.watch('gulpfile.js', ['default']);
 });
 

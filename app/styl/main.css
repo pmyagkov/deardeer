@@ -10,6 +10,32 @@ a {
 }
 .anchor {
   text-decoration: none;
+  position: relative;
+}
+.anchor:before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: -27px;
+  top: -2px;
+  background-image: url("../images/leaves.svg");
+  -webkit-background-size: cover;
+  background-size: cover;
+  opacity: 0;
+  -webkit-transform: rotateZ(-90deg) scale(0.8) translateZ(0);
+  transform: rotateZ(-90deg) scale(0.8) translateZ(0);
+  -webkit-transform-origin: right;
+  -ms-transform-origin: right;
+  transform-origin: right;
+  -webkit-transition: -webkit-transform 0.3s ease 0s, opacity 0.3s ease 0s;
+  transition: transform 0.3s ease 0s, opacity 0.3s ease 0s;
+}
+.anchor:hover:before {
+  opacity: 1;
+  -webkit-transform: rotateZ(0deg) scale(1) translateZ(0);
+  transform: rotateZ(0deg) scale(1) translateZ(0);
 }
 .aside {
   width: 20em;
@@ -30,11 +56,14 @@ a {
 }
 .logo {
   width: 100%;
-  height: 30%;
+  height: 35%;
   margin: 50px auto;
-  background: url("../images/logo.png") no-repeat 50% 50%;
   -webkit-background-size: contain;
   background-size: contain;
+}
+.logo svg {
+  width: 100%;
+  height: 100%;
 }
 .navigation {
   padding: 0;
@@ -98,8 +127,8 @@ a {
   left: 0;
   right: 0;
   bottom: 0;
-  -webkit-box-shadow: inset 1px 1px 1px 1px rgba(0,0,0,0.4);
-  box-shadow: inset 1px 1px 1px 1px rgba(0,0,0,0.4);
+  -webkit-box-shadow: inset 0px 0px 3px 2px rgba(0,0,0,0.4);
+  box-shadow: inset 0px 0px 3px 2px rgba(0,0,0,0.4);
 }
 .stories {
   height: 100%;

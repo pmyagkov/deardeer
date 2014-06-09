@@ -15,6 +15,32 @@ a
 
 .anchor
   text-decoration: none
+  position: relative
+
+  &:before
+    content: ''
+    display: block
+    width: 20px
+    height: 20px
+    position: absolute
+    left: -27px
+    top: -2px
+
+    background-image: url("../images/leaves.svg")
+    background-size: cover;
+
+    opacity: 0
+
+    // translateZ нужен для того, анимация одной ссылки не влияла на другую
+    transform: rotateZ(-90deg) scale(0.8) translateZ(0)
+    transform-origin: right
+    transition: transform 0.3s ease 0s, opacity 0.3s ease 0s
+
+  &:hover:before
+    opacity: 1
+    transform: rotateZ(0deg) scale(1) translateZ(0)
+
+  //&:hover
 
 .aside
   width: $aside_width
@@ -37,10 +63,13 @@ a
 
 .logo
   width: 100%
-  height: 30%
+  height: 35%
   margin: $edge_width auto
-  background: url("../images/logo.png") no-repeat 50% 50%
   background-size: contain
+
+  & svg
+    width: 100%
+    height: 100%
 
 .navigation
   padding: 0
@@ -111,7 +140,7 @@ a
       left: 0
       right: 0
       bottom: 0
-      box-shadow: inset 1px 1px 1px 1px rgba(#000, 0.4)
+      box-shadow: inset 0px 0px 3px 2px rgba(0,0,0,0.4)
 
 .stories
   height: 100%
