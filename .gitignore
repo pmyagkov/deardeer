@@ -3,6 +3,8 @@ dist
 .tmp
 .sass-cache
 .idea
-.idea/**
+.idea/**/*
 app/bower_components
 test/bower_components
+app/js/_*.js
+app/images/photos/photos.json

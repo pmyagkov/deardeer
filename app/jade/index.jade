@@ -21,16 +21,27 @@ html
                     a.anchor(href="#contacts") Контакты
 
         .main
-            .main-inner
-                .content
-                    | @@include('./stories.html')
+            ul.stories
+                - for(var i = 0; i < photos.length; i++)
+                    li.story(class= i == 0 ? "current" : "")
+                        .story-inner
+                            .story-content
+
+            ul.thumbs
+                - for(var i = 0; i < photos.length; i++)
+                    li.thumb(class= i == 0 ? "current" : "", data-id= i)
+            //
+                .arrows
+                    .up.change
+                    .down.change
+
 
         script(type="text/javascript", src="bower_components/jquery/dist/jquery.min.js")
         script(type="text/javascript", src="bower_components/es5-shim/es5-shim.min.js")
         script(type="text/javascript", src="bower_components/lodash/dist/lodash.min.js")
         script(type="text/javascript", src="js/lib/finch.min.js")
 
-        script(type="text/javascript", src="js/main.js")
+        script(type="text/javascript", src="js/_main.js")
 
 
 
