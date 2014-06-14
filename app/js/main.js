@@ -50,6 +50,19 @@ App.init = function() {
 
     var currentPhoto = 0;
 
+    /**
+     *
+     * @param id 0-based index of the photo
+     */
+    function slideToPhoto(id) {
+        var marginTop = -id * 100;
+        var backgroundPosition = marginTop / 4;
+        $('.stories').css({'margin-top': marginTop + 'vh'});
+        $('.paranja').css({'background-position': '0 ' + backgroundPosition + 'vh'});
+
+        $('.thumb').removeClass('current').filter('[data-id=' + currentPhoto + ']').addClass('current');
+    }
+
     $('.arrows .change').click(function(e) {
         var next = $(e.target).closest('.change').is('.down');
         currentPhoto = currentPhoto + (next ? 1 : -1);
@@ -58,18 +71,15 @@ App.init = function() {
         } else if (currentPhoto > rootObj.photos.length - 1) {
             currentPhoto = 0;
         }
-        $('.thumb').removeClass('current').filter(':eq(' + currentPhoto + ')').addClass('current');
 
+        slideToPhoto(currentPhoto);
     });
 
     $('.thumb').click(function(e) {
         var $target = $(e.target).closest('.thumb');
         var photoId = Number($target.data('id'));
 
-        $('.stories').css('margin-top', -photoId*100 + 'vh');
-
-        $('.thumb').removeClass('current');
-        $target.addClass('current');
+        slideToPhoto(photoId);
     });
 };
 

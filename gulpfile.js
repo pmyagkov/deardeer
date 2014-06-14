@@ -51,13 +51,13 @@ var writeError = function(err) {
 };
 
 function processPhotoStat(filePath, stat) {
-    console.log('Processing photo stat');
+    //console.log('Processing photo stat');
 
     var result = {};
 
     if (stat && stat.isFile()) {
         var ext = path.extname(filePath);
-        console.log('ext: ' + ext);
+        //console.log('ext: ' + ext);
         // это картинка?
         if (/\.jpeg|jpg|png/.test(ext)) {
             var fileName = path.basename(filePath, ext);
@@ -71,13 +71,13 @@ function processPhotoStat(filePath, stat) {
         console.error(filePath + ' is not a file!');
     }
 
-    console.log('resultObj: ' + JSON.stringify(result));
+    //console.log('resultObj: ' + JSON.stringify(result));
 
     return result;
 }
 
 function extractPhotoDirectory(promoDir) {
-    console.log('extracting photo directory');
+    //console.log('extracting photo directory');
 
     return readdir(promoDir).then(function(list) {
         var photosDef = q.defer();
@@ -97,7 +97,7 @@ function extractPhotoDirectory(promoDir) {
         }, writeError);
 
         q.all(deferreds).done(function() {
-            console.log('photosObj: ' + JSON.stringify(photosObj));
+            //console.log('photosObj: ' + JSON.stringify(photosObj));
             photosDef.resolve(photosObj);
         });
 
@@ -136,11 +136,11 @@ gulp.task('photos.json', function() {
 
         q.all(deferreds).done(function() {
             var jsoned = JSON.stringify(foldersArr);
-            console.log('foldersArr: ' + jsoned);
+            //console.log('foldersArr: ' + jsoned);
 
             writeFile(path.join(paths.photos.dir, 'photos.json'), jsoned).then(function() {
                 foldersDef.resolve();
-                console.log('photos.json written');
+                //console.log('photos.json written');
             }, writeError);
         });
 
@@ -242,7 +242,7 @@ gulp.task('jade', ['photos.json'], function() {
 
 gulp.task('html-include', function() {
     return gulp.src([paths.jade.dir + 'index.html'])
-        .pipe(debug({verbose: true}))
+        //.pipe(debug({verbose: true}))
         .pipe(include('@@'))
         .pipe(gulp.dest('app/'));
 });

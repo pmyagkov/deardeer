@@ -8,6 +8,7 @@ html
         link(rel="stylesheet", type="text/css", href="http://fonts.googleapis.com/css?family=Philosopher|Marck+Script|Oranienbaum|Lobster|EB+Garamond|Marmelad&subset=cyrillic")
 
     body
+        .paranja
         .aside
             .logo
                 | @@include('../images/logo.svg')
@@ -26,14 +27,13 @@ html
                     li.story(class= i == 0 ? "current" : "")
                         .story-inner
                             .story-content
+            .arrows
+                .up.change
+                .down.change
 
             ul.thumbs
                 - for(var i = 0; i < photos.length; i++)
                     li.thumb(class= i == 0 ? "current" : "", data-id= i)
-            //
-                .arrows
-                    .up.change
-                    .down.change
 
 
         script(type="text/javascript", src="bower_components/jquery/dist/jquery.min.js")
