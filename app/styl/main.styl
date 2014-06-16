@@ -12,7 +12,7 @@ body
   font-size: 16px
   margin: 0
   background-image: url("../images/wood/0.jpg")
-  //overflow: hidden
+  overflow: hidden
   white-space: nowrap
 
 ul
@@ -40,7 +40,7 @@ a
     right: 0
     left: 0
     bottom: 0
-    background: linear-gradient(90deg, rgba(255,255,255,0.9) 100px, rgba(255,255,255,0.8) 300px, rgba(255,255,255,0) 400px)
+    background: linear-gradient(90deg, rgba(255,255,255,0.6) 100px, rgba(255,255,255,0.8) 300px, rgba(255,255,255,0) 400px)
 
 
 
@@ -80,6 +80,7 @@ a
   position: absolute
   display: block
   color: rgba(#fff, 0.5)
+  font-family: 'Philosopher', 'Helverica', sans-serif
 
   /*&::before
     content: ''
@@ -106,30 +107,22 @@ a
   padding: 0
   margin: 30px auto
   font-size: 1.5em
-  font-family: 'Neucha', cursive
-
-
-  font-family: 'Marck Script', cursive;
-  font-family: 'Oranienbaum', serif;
-  font-family: 'Lobster', cursive;
-  font-family: 'EB Garamond', serif;
-  font-family: 'Marmelad', sans-serif;
-  font-family: 'Philosopher', sans-serif
-
 
   li
-    margin-bottom: 1em
+    margin: .2em 0 1em 0
     display: block
     width: 100%
     text-align: center
-    //text-shadow: 1px 1px 5px rgb(129, 70, 37)
 
-    /*&:nth-child(1)
-      font-family: 'Philosopher', sans-serif
-    &:nth-child(2)
-      font-family: 'Marck Script', cursive
-    &:nth-child(3)
-      font-family: 'Oranienbaum', cursive*/
+.phone
+  margin-bottom: $edge_width
+  position: absolute
+  bottom: 0
+  width: 100%
+  font-size: 1.5em
+  text-align: center
+  color: black
+
 
 .main
   position: absolute
@@ -149,43 +142,29 @@ a
 
   .arrows
     position: absolute
-    top: 0
-    left: 0
-    bottom: 0
-    right: 0
+    top: $edge_width
+    left: $edge_width
+    bottom: $edge_width
+    right: 145px + $edge_width
 
     & .up,
     & .down
       height: 50%
+
+    & .up
+      cursor: url(../images/arrows/up.png), auto
+
+    & .down
       position: relative
-      right: 90px
-      cursor: hand
 
-      &::before
+      & .down-inner
         content: ''
-        width: 100px
-        height: 100px
-        border-left: 5px solid
-        border-left-color: rgba(#fff, .5)
-        border-top: 5px solid
-        border-top-color: rgba(#fff, .5)
         position: absolute
-        right: 100px
-
-      &:hover::before
-        animation: border-glow 1s ease 0s infinite
-
-
-    & .up::before
-      margin-top: 50px
-      top: 40%
-      transform: rotateZ(45deg)
-
-    & .down::before
-      bottom: 40%
-      transform: rotateZ(-135deg)
-
-
+        top: 0
+        left: 0
+        right: 0
+        bottom: 33px
+        cursor: url(../images/arrows/down.png), auto
 
 
   .thumbs
@@ -194,41 +173,40 @@ a
     position: absolute
     right: 0
     top: 0
-    margin: 30px 0px 30px 0
-    padding: 10px
+    padding: 30px 10px 10px 30px
     box-sizing: border-box
     height: 100%
-    overflow: hidden
+    transition: margin-top .3s ease .2s
 
     li
-      margin: 20px 0 0 0
-      padding: 0
-      background-size: contain
+      margin: -20px 0 0 0
+      padding: 10px 10px 40px 10px
       width: 9em
       height: 6em
-      border: 5px  solid
-      border-color: rgba(#fff, .6)
       opacity: 0.8
       cursor: hand
+      box-shadow: -1px -1px 10px rgba(0, 0, 0, .5)
       transition: transform .3s ease-out 0s, border-color .3s ease-out 0s, opacity .3s ease-out
 
       &:hover,
       &.current
-        transform: translateX(-10px) rotateZ(0) translateZ(0)!important
-        border-color: rgba(#fff, 1)
+        transform: translateX(-20px) rotateZ(0) translateZ(0)!important
         opacity: 1
 
       &.current
         cursor: pointer
 
+      &.invisible
+        opacity: 0
+
 
 for $a in (1..$photos_count)
   .story:nth-child({$a}) .story-inner
-    background-image: url("../images/photos/" $a "/original.jpg")
+    background-image: url("../images/photos/" $a "/1920x1680.jpg")
 
   .thumb:nth-child({$a})
     transform: rotateZ(random(-10, 10) deg) translateZ(0)
-    background-image: url("../images/photos/" $a "/thumb.jpg")
+    background: url("../images/photos/" $a "/thumb.jpg") 50% 10px no-repeat, rgba(#fff,1)
 
 
 .stories
@@ -242,7 +220,7 @@ for $a in (1..$photos_count)
   & .story-inner
     position: absolute
     top: $edge_width
-    left: $edge_width
+    left: $story_border_width
     bottom: $edge_width
     right: $edge_width + 80
     box-sizing: border-box

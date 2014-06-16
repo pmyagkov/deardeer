@@ -19,16 +19,19 @@ var fs = require('fs');
 var q = require('q');
 
 var paths = {
-    'js': { dir: 'app/js/', glob: 'app/js/main.js' },
-    'styl': { dir: 'app/styl/', glob: 'app/styl/*.styl'},
-    'jade': { dir: 'app/jade/', glob: 'app/jade/*.jade'},
-    'photos': { dir: 'app/images/photos/', glob: 'app/images/photos/*.jpg'}
+    'js': { dir: 'app/js/', glob: 'app/js/main.js', build: 'app/.build/js' },
+    'styl': { dir: 'app/styl/', glob: 'app/styl/*.styl', build: 'app/.build/styl' },
+    'jade': { dir: 'app/jade/', glob: 'app/jade/*.jade', build: 'app/.build' },
+    'photos': { dir: 'app/images/photos/', glob: 'app/images/photos/*.jpg'},
+    'images': { dir: 'app/images/', glob: 'app/images/**/*', build: 'app/.build/images'},
+    'build': { dir: 'app/.build/'}
+
 };
 
-function thumbs() {
+function resize(width, height, basename) {
     var resizeOptions = {
-        width: 150,
-        height: 100,
+        width: width,
+        height: height,
         crop: false,
         upscale: false
     };
@@ -36,7 +39,7 @@ function thumbs() {
     return gulp.src(paths.photos.dir + '*/original.jpg')
         .pipe(imageResize(resizeOptions))
         .pipe(rename(function(path) {
-            path.basename = "thumb";
+            path.basename = basename;
         }))
         .pipe(gulp.dest(paths.photos.dir));
 }
@@ -125,7 +128,7 @@ gulp.task('photos.json', function() {
                         folderDef.resolve();
                     });
                 } else {
-                    console.log(path + ' is not a dir');
+                    console.log(filePath + ' is not a dir');
 
                     folderDef.resolve();
                 }
@@ -149,20 +152,41 @@ gulp.task('photos.json', function() {
 
 });
 
-gulp.task('js', ['photos.json'], function() {
-    gulp.src(paths.js.glob)
-        .pipe(borschik({minimize: false, tech: 'js'}))
-        .pipe(rename(function(path) {
-            path.basename = "_main";
-        }))
-        .pipe(gulp.dest(paths.js.dir));
+gulp.task('lib', function() {
+    var libs = [
+        'app/bower_components/jquery/dist/jquery.min.js',
+        'app/bower_components/es5-shim/es5-shim.min.js',
+        'app/bower_components/lodash/dist/lodash.min.js',
+        'app/js/lib/finch.min.js'
+    ];
+
+    return gulp.src(libs)
+        .pipe(newer(path.join(paths.js.build, 'lib', 'lib.js')))
+        .pipe(borschik({tech: 'js', minimize: true}))
+        .pipe(concat('lib.js'))
+        .pipe(gulp.dest(path.join(paths.js.build, 'lib')));
 });
 
-gulp.task('normalize image', function() {
+gulp.task('js', ['lib', 'photos.json'], function() {
+    return gulp.src(paths.js.glob)
+        .pipe(borschik({minimize: false, tech: 'js'}))
+        /*.pipe(rename(function(path) {
+            path.basename = "_main";
+        }))*/
+        .pipe(gulp.dest(paths.js.build));
+});
+
+gulp.task('images', function() {
+     return gulp.src(paths.images.glob)
+         .pipe(gulp.dest(paths.images.build));
+});
+
+gulp.task('normalize', function() {
+
     glob(paths.photos.glob, {debug: false}, function (er, files) {
-        files.forEach(function(file) {
-            var basename = path.basename(file, '.jpg');
-            var dirPath = path.join(paths.photos.dir, basename);
+        files.forEach(function(file, i) {
+            //var basename = path.basename(file, '.jpg');
+            var dirPath = path.join(paths.photos.dir, (i + 1).toString());
             if (!fs.existsSync(dirPath)) {
                 fs.mkdirSync(dirPath);
             }
@@ -194,24 +218,16 @@ gulp.task('test2', function() {
 });
 
 gulp.task('thumbs', function() {
-    thumbs();
+    resize(150, 100, 'thumb');
 });
 
-
-/*
-gulp.task('image', function() {
-
-
-
-
-    return gulp.src(paths.photos.glob)
-        .pipe(newer)
-
+gulp.task('big', function() {
+    resize(1920, 1680, '1920x1680');
 });
-*/
 
-gulp.task('styl', ['photos.json'], function() {
+gulp.task('css', ['photos.json'], function() {
     var photos = getPhotosJson();
+    console.log('Photos: ' + photos);
 
     return gulp.src(paths.styl.glob)
         .pipe(stylus({
@@ -220,7 +236,7 @@ gulp.task('styl', ['photos.json'], function() {
             }
         }))
         .pipe(autoprefixer())
-        .pipe(gulp.dest(paths.styl.dir));
+        .pipe(gulp.dest(paths.styl.build));
 });
 
 
@@ -228,38 +244,43 @@ function getPhotosJson() {
     return fs.readFileSync(path.join(paths.photos.dir, 'photos.json'), {encoding: 'utf-8'});
 }
 
-gulp.task('jade', ['photos.json'], function() {
+gulp.task('html', ['photos.json'], function() {
     var data = getPhotosJson();
 
     var photosObj = JSON.parse(data);
 
-    gulp.src(paths.jade.glob)
+    return gulp.src(paths.jade.glob)
         .pipe(jade({locals: {photos: photosObj}}))
         .pipe(gulp.dest(paths.jade.dir));
 
 });
 
 
-gulp.task('html-include', function() {
+gulp.task('html-include', ['html'], function() {
     return gulp.src([paths.jade.dir + 'index.html'])
         //.pipe(debug({verbose: true}))
         .pipe(include('@@'))
-        .pipe(gulp.dest('app/'));
+        .pipe(gulp.dest('app/.build/'));
 });
 
-gulp.task('html', function() {
-    sequence('jade', 'html-include');
-});
+gulp.task('markup', ['html-include', 'images', 'js', 'css']);
 
 gulp.task('watch', function() {
     var photosWatchGlob = [paths.photos.dir + '/*', paths.photos.dir + '/**/*', '!' + paths.photos.dir + '/photos.json'];
 
     gulp.watch(paths.js.glob, ['js']);
-    gulp.watch(paths.styl.glob, ['styl']);
+    gulp.watch(paths.styl.glob, ['css']);
     gulp.watch([paths.jade.glob, 'app/images/*.svg'], ['html']);
     gulp.watch(photosWatchGlob, ['js', 'html']);
     // здесь нужно перезапускать процесс gulp'a по изменению gulpfile
-    //gulp.watch('gulpfile.js', ['default']);
+    //gulp.watch('gulpfileza.js', ['default']);
 });
 
-gulp.task('default', ['js', 'html', 'styl', 'watch']);
+gulp.task('favicon', function() {
+    return gulp.src('app/favicon.ico')
+        .pipe(gulp.dest(paths.build.dir));
+});
+
+gulp.task('rpm', ['markup', 'js', 'css', 'favicon']);
+
+gulp.task('default', ['markup', 'js', 'css', 'watch']);
