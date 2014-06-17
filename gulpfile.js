@@ -12,11 +12,28 @@ var rename = require('gulp-rename');
 var glob = require('glob');
 var _ = require('lodash');
 var borschik = require('gulp-borschik');
+var scp = require('gulp-scp2');
 
 var path = require('path');
 var fs = require('fs');
 
 var q = require('q');
+
+gulp.task('upload', function () {
+    var privateKey = fs.readFileSync('/Users/viking/.ssh/id_rsa');
+
+    return gulp.src(paths.build.dir)
+        .pipe(scp({
+            host: 'deardeerart.ru',
+            username: 'root',
+            dest: '/var/www/deardeerart/',
+            privateKey: privateKey,
+            passphrase: 'Sid$Civilization'
+        }))
+        .on('error', function(err) {
+            console.log(err);
+        });
+});
 
 var paths = {
     'js': { dir: 'app/js/', glob: 'app/js/main.js', build: 'app/.build/js' },
@@ -24,7 +41,7 @@ var paths = {
     'jade': { dir: 'app/jade/', glob: 'app/jade/*.jade', build: 'app/.build' },
     'photos': { dir: 'app/images/photos/', glob: 'app/images/photos/*.jpg'},
     'images': { dir: 'app/images/', glob: 'app/images/**/*', build: 'app/.build/images'},
-    'build': { dir: 'app/.build/'}
+    'build': { dir: 'app/.build/', glob: 'app/.build/*'}
 
 };
 
@@ -227,7 +244,6 @@ gulp.task('big', function() {
 
 gulp.task('css', ['photos.json'], function() {
     var photos = getPhotosJson();
-    console.log('Photos: ' + photos);
 
     return gulp.src(paths.styl.glob)
         .pipe(stylus({
@@ -241,13 +257,11 @@ gulp.task('css', ['photos.json'], function() {
 
 
 function getPhotosJson() {
-    return fs.readFileSync(path.join(paths.photos.dir, 'photos.json'), {encoding: 'utf-8'});
+    return JSON.parse(fs.readFileSync(path.join(paths.photos.dir, 'photos.json'), {encoding: 'utf-8'}));
 }
 
 gulp.task('html', ['photos.json'], function() {
-    var data = getPhotosJson();
-
-    var photosObj = JSON.parse(data);
+    var photosObj = getPhotosJson();
 
     return gulp.src(paths.jade.glob)
         .pipe(jade({locals: {photos: photosObj}}))
@@ -270,8 +284,8 @@ gulp.task('watch', function() {
 
     gulp.watch(paths.js.glob, ['js']);
     gulp.watch(paths.styl.glob, ['css']);
-    gulp.watch([paths.jade.glob, 'app/images/*.svg'], ['html']);
-    gulp.watch(photosWatchGlob, ['js', 'html']);
+    gulp.watch([paths.jade.glob, 'app/images/*.svg'], ['markup']);
+    gulp.watch(photosWatchGlob, ['js', 'markup']);
     // здесь нужно перезапускать процесс gulp'a по изменению gulpfile
     //gulp.watch('gulpfileza.js', ['default']);
 });

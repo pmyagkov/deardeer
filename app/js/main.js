@@ -75,7 +75,10 @@ App._slideToPhoto = function(id) {
     var marginTop = -next * 100;
     var backgroundPosition = marginTop / 4;
     $('.stories').css({'margin-top': marginTop + 'vh'});
-    $('.paranja').css({'background-position': '0 ' + backgroundPosition + 'vh'});
+    var $flowers = $('.flowers');
+    $flowers.filter('.flowers_front').css({'background-position': '0 ' + backgroundPosition + 'vh'});
+    $flowers.filter('.flowers_middle').css({'background-position': '0 ' + (backgroundPosition / 2) + 'vh'});
+    $flowers.filter('.flowers_back').css({'background-position': '0 ' + (backgroundPosition / 4) + 'vh'});
 
     $thumbs.removeClass('current').filter('[data-id=' + next + ']').addClass('current');
 

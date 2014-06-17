@@ -8,7 +8,10 @@ html
         link(rel="stylesheet", type="text/css", href="styl/main.css")
         link(rel="stylesheet", type="text/css", href="http://fonts.googleapis.com/css?family=Philosopher&subset=cyrillic")
     body
-        .paranja
+        .flowers.flowers_back
+        .flowers.flowers_middle
+        .flowers.flowers_front
+        .cover
         .aside
             .logo
                 | @@include('../images/logo.svg')
@@ -17,13 +20,29 @@ html
                 li
                     a.anchor(href="#stories") Цветочные истории
                 li
+                    a.anchor(href="#service") Услуги
+                li
                     a.anchor(href="#about") О мастерской
                 li
                     a.anchor(href="#contacts") Контакты
             .phone
-                | +7 (916) 573－98－18
-
-        .main
+                span.digits
+                    span.sign.plus
+                        | +
+                    | 7&nbsp;
+                    span.sign
+                        | (
+                    | 916
+                    span.sign
+                        | )
+                    | &nbsp;573
+                    span.sign
+                        | -
+                    | 98
+                    span.sign
+                        | -
+                    | 18
+        .container.container_stories(style='display:none')
             ul.stories
                 - for(var i = 0; i < photos.length; i++)
                     li.story(class= i == 0 ? "current" : "")
@@ -37,6 +56,10 @@ html
             ul.thumbs
                 - for(var i = 0; i < photos.length; i++)
                     li.thumb(class= i == 0 ? "current" : "", data-id= i)
+
+        .container.container_about
+            .about
+                .photo
 
 
         script(type="text/javascript", src="js/lib/lib.js")
