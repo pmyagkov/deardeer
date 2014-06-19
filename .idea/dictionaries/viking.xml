@@ -2,7 +2,9 @@
   <dictionary name="viking">
     <words>
       <w>autoprefixer</w>
+      <w>borschik</w>
       <w>concat</w>
+      <w>jsoned</w>
       <w>qutoprefixer</w>
       <w>styl</w>
     </words>

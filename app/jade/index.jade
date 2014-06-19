@@ -2,12 +2,16 @@ html
     head
         meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
         meta(charset="utf-8")
-        title Dear Deer Art
-        link(rel='stylesheet', type='text/css', href="http://fonts.googleapis.com/css?family=Neucha&subset=latin,cyrillic")
-        link(rel="stylesheet", type="text/css", href="styl/main.css")
-        link(rel="stylesheet", type="text/css", href="http://fonts.googleapis.com/css?family=Philosopher|Marck+Script|Oranienbaum|Lobster|EB+Garamond|Marmelad&subset=cyrillic")
 
+        title Dear Deer Art
+        link(rel='shortcut icon', type="image/x-icon", href='favicon.ico')
+        link(rel="stylesheet", type="text/css", href="styl/main.css")
+        link(rel="stylesheet", type="text/css", href="http://fonts.googleapis.com/css?family=Philosopher&subset=cyrillic")
     body
+        .flowers.flowers_back
+        .flowers.flowers_middle
+        .flowers.flowers_front
+        .cover
         .aside
             .logo
                 | @@include('../images/logo.svg')
@@ -16,19 +20,49 @@ html
                 li
                     a.anchor(href="#stories") Цветочные истории
                 li
+                    a.anchor(href="#service") Услуги
+                li
                     a.anchor(href="#about") О мастерской
                 li
                     a.anchor(href="#contacts") Контакты
+            .phone
+                span.digits
+                    span.sign.plus
+                        | +
+                    | 7&nbsp;
+                    span.sign
+                        | (
+                    | 916
+                    span.sign
+                        | )
+                    | &nbsp;573
+                    span.sign
+                        | -
+                    | 98
+                    span.sign
+                        | -
+                    | 18
+        .container.container_stories(style='display:none')
+            ul.stories
+                - for(var i = 0; i < photos.length; i++)
+                    li.story(class= i == 0 ? "current" : "")
+                        .story-inner
+                            .story-content
+            .arrows
+                .up.change
+                .down.change
+                    .down-inner
 
-        .main
-            .main-inner
-                .content
-                    | @@include('./stories.html')
+            ul.thumbs
+                - for(var i = 0; i < photos.length; i++)
+                    li.thumb(class= i == 0 ? "current" : "", data-id= i)
 
-        script(type="text/javascript", src="bower_components/jquery/dist/jquery.min.js")
-        script(type="text/javascript", src="bower_components/es5-shim/es5-shim.min.js")
-        script(type="text/javascript", src="bower_components/lodash/dist/lodash.min.js")
-        script(type="text/javascript", src="js/lib/finch.min.js")
+        .container.container_about
+            .about
+                .photo
+
+
+        script(type="text/javascript", src="js/lib/lib.js")
 
         script(type="text/javascript", src="js/main.js")
 
