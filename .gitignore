@@ -10,3 +10,4 @@ test/bower_components
 app/js/_*.js
 app/images/photos/photos.json
 app/.build
+app/jade/*.html
