@@ -1,30 +1,132 @@
 var App = {};
 
-App._go = function(page) {
-    console.log(page.id);
-    var $node = $('#' + page.id).show();
+/* borschik:include:page.js */
 
-    if (!page.rendered) {
-        if ($node.length) {
-            App.$content.empty().append($node);
-        } else {
+App._go = function(next) {
+    console.log('Renderring page "' + next.id + '"');
 
+    var stub = App._getPage('stub');
+
+    var def = $.Deferred().resolve();
+
+    if (App.pages.current) {
+        if (next.id === App.pages.current.id) {
+            return;
         }
 
-        page.rendered = true;
+        if (_.isFunction(App.pages.current.unload)) {
+            def = App.pages.current.unload();
+        }
     }
+
+    if (!def || !def.then) {
+        def = $.Deferred().resolve(def).promise();
+    }
+
+    App.pages.current = next;
+    def.then(function() {
+        var def;
+        if (_.isFunction(next.load)) {
+            def = next.load();
+        }
+
+        if (!def || !def.then) {
+            def = $.Deferred().resolve(def);
+        }
+
+        return def.promise();
+    }).then(function() {
+        stub.$node.hide();
+    });
+};
+
+App._getPage = function(id) {
+    var page = _.find(App.pages, {id: id});
+    if (!page) {
+        throw Error('Page "' + id + '" can\'t be found');
+    }
+    return page;
+};
+
+
+App._initPages = function() {
+    App.pages = _.map(App.pages, function(p) {
+        var page = new App.Page(p);
+        if (page.main) {
+            Finch.route('/', App._go.bind(App, page));
+        }
+        Finch.route(App._getPageHash(page.id), App._go.bind(App, page));
+
+        page.$node = $('.page_' + page.id)
+
+        return page;
+    });
+
+    Finch.listen();
 };
 
 App.pages = [
     {
+        id: 'stub'
+
+    },
+    {
         id: 'stories',
-        main: true
+        main: true,
+        load: function() {
+            this.deferred = $.Deferred();
+
+            //this.resolveOnAnimationEnd();
+
+            this.$node
+                .addClass('with-transition').removeClass('transparent')
+                .find('.thumbs').removeClass('out');
+
+            return this.deferred.resolve().promise();
+        },
+        unload: function() {
+            this.deferred = $.Deferred();
+
+            //this.resolveOnAnimationEnd();
+
+            this.$node.find('.thumbs').addClass('out').end()
+                .addClass('transparent');
+
+            return this.deferred.resolve().promise();
+        }
     }, {
-        id: 'about'
+        id: 'about',
+        load: function() {
+            this.$node.find('.text')
+                /*.bacon({
+                    'type' : 'line',
+                    'step' : 5,
+                    'align' : 'right'
+                })*/
+                .end()
+                .addClass('with-transition').removeClass('transparent');
+        },
+        unload: commonUnload
     }, {
         id: 'contacts'
     }
 ];
+
+function commonLoad() {
+    this.deferred = $.Deferred();
+
+    this.$node.addClass('with-transition').removeClass('transparent');
+
+    return this.deferred.resolve().promise();
+}
+
+function commonUnload() {
+    this.deferred = $.Deferred();
+
+    this.$node.addClass('with-transition').addClass('transparent');
+
+    return this.deferred.resolve().promise();
+}
 
 App._getPageHash = function(pageId) {
     return pageId;
@@ -65,7 +167,7 @@ App._slideToPhoto = function(id) {
             var selector = [(rowNumber + 1) * App._thumbsPerRow, rowNumber * App._thumbsPerRow - 1]
                 .map(function(i) { return ':eq(' + i + ')'; })
                 .join(',');
-            $thumbs.removeClass('invisible').filter(selector).addClass('invisible');
+            $thumbs.removeClass('transparent').filter(selector).addClass('transparent');
         }, 200);
 
     }
@@ -101,7 +203,7 @@ App._initGallery = function() {
 
     var $thumbs = $('.thumb');
     App._thumbsPerRow = Math.floor(height / App._thumbHeight);
-    $thumbs.eq(App._thumbsPerRow).addClass('invisible');
+    $thumbs.eq(App._thumbsPerRow).addClass('transparent');
 
     App._thumbsNumber = $thumbs.length;
 
@@ -140,17 +242,8 @@ App._initGallery = function() {
 };
 
 App.init = function() {
-    App.$content = $('.content');
 
-    _.forEach(App.pages, function(p) {
-        var page = p;
-        if (page.main) {
-            Finch.route('/', App._go.bind(App, page));
-        }
-        Finch.route(App._getPageHash(page.id), App._go.bind(App, page));
-    });
-
-    Finch.listen();
+    App._initPages();
 
     App._initGallery();
 };

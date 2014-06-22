@@ -13,7 +13,7 @@ html
         .flowers.flowers_front
         .cover
         .aside
-            .logo
+            a.logo(href='#')
                 | @@include('../images/logo.svg')
 
             ul.navigation
@@ -42,22 +42,27 @@ html
                     span.sign
                         | -
                     | 18
-        .container.container_stories(style='display:none')
+        .page.page_stub
+            .frame
+                .progress
+                    div
+
+        .page.page_stories.transparent
             ul.stories
                 - for(var i = 0; i < photos.length; i++)
                     li.story(class= i == 0 ? "current" : "")
                         .story-inner
-                            .story-content
+                            .story__image
             .arrows
                 .up.change
                 .down.change
                     .down-inner
 
-            ul.thumbs
+            ul.thumbs.out
                 - for(var i = 0; i < photos.length; i++)
                     li.thumb(class= i == 0 ? "current" : "", data-id= i)
 
-        .container.container_about
+        .page.page_about.transparent
             .about
                 .about__inner
                     .photo-wrapper
@@ -76,7 +81,6 @@ html
                             | В свою очередь мы, команда
                             span.highlight &nbsp;Dear&nbsp;Deer,&nbsp;
                             | готовы внимательно прислушаться к Вашим пожеланиям, уловить Ваше настроение и с радостью приступить к воплощению уникальной истории Вашего Дня!
-
 
         script(type="text/javascript", src="js/lib/lib.js")
 

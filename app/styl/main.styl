@@ -48,7 +48,7 @@ ul
 a
   color: black
 
-frame()
+frame($with_inner = true, $inner_selector = '&::after')
   position: absolute
   top: $edge_width
   left: $story_border_width
@@ -65,7 +65,21 @@ frame()
     left: - $story_border_width
     bottom: - $story_border_width
     right: - $story_border_width
+    background: rgba(#FFF, .6)
     box-shadow: 0px 0px 9px rgba(#000,0.6)
+
+  if $with_inner
+    {$inner_selector}
+      content: ''
+      position: absolute
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
+      box-shadow: inset 0px 0px 9px rgba(#000,0.6)
+
+.transparent
+  opacity: 0 !important
 
 .flowers
   position: absolute
@@ -137,6 +151,7 @@ frame()
   font-size: 24px
 
 .logo
+  display: block
   width: 100%
   height: 35%
   margin: $edge_width auto
@@ -174,7 +189,8 @@ frame()
 
 
 
-.container
+
+.page
   position: absolute
   left: $aside_width
   right: 0
@@ -183,7 +199,10 @@ frame()
 
   background: rgba(255,255,255,.4)
 
-.container_stories
+  &.with-transition
+    transition: opacity 0.5s ease
+
+.page_stories
   & .content
     position: relative
     height: 100%
@@ -194,6 +213,8 @@ frame()
     left: $edge_width
     bottom: $edge_width
     right: 145px + $edge_width
+
+    z-index: 10
 
     & .up,
     & .down
@@ -224,7 +245,11 @@ frame()
     padding: 30px 10px 10px 30px
     box-sizing: border-box
     height: 100%
-    transition: margin-top .3s ease .2s
+    transition: margin-top .3s ease .2s, right .3s ease
+    z-index: 2
+
+    &.out
+      right: -230px
 
     li
       margin: -20px 0 0 0
@@ -244,47 +269,39 @@ frame()
       &.current
         cursor: pointer
 
-      &.invisible
-        opacity: 0
+  for $a in (1..$photos_count)
+    .story:nth-child({$a}) .story__image
+      background-image: url("../images/photos/" $a "/1920x1680.jpg")
+      background-size: cover
 
-for $a in (1..$photos_count)
-  .story:nth-child({$a}) .story-inner
-    background-image: url("../images/photos/" $a "/1920x1680.jpg")
+    .thumb:nth-child({$a})
+      transform: rotateZ(random(-10, 10) deg) translateZ(0)
+      background: url("../images/photos/" $a "/thumb.jpg") 50% 10px no-repeat, rgba(#fff,1)
 
-  .thumb:nth-child({$a})
-    transform: rotateZ(random(-10, 10) deg) translateZ(0)
-    background: url("../images/photos/" $a "/thumb.jpg") 50% 10px no-repeat, rgba(#fff,1)
+  .stories
+    margin-top: 0
+    transition: margin-top $transition_duration ease
 
-.stories
-  margin-top: 0
-  transition: margin-top $transition_duration ease
+  .story
+    height: 100vh
+    position: relative
 
-.story
-  height: 100vh
-  position: relative
+    & .story-inner
+      frame(true)
 
-  & .story-inner
-    frame()
+    & .story__image
+      width: 100%
+      height: 100%
+      position: relative
 
 
 
 /* ==== about ==== */
-.container_about
+.page_about
   .about
-    frame()
+    frame(true, '.about__inner')
 
-    &::before
-      background: rgba(#FFF, .6)
 
-    &::after
-      content: ''
-      position: absolute
-      z-index: 2
-      top: 0
-      left: 0
-      right: 0
-      bottom: 0
-      box-shadow: inset 0px 0px 9px rgba(#000,0.6)
 
     .about__inner
       height: 100%
@@ -296,6 +313,7 @@ for $a in (1..$photos_count)
       position: relative
       z-index: 1
       width: 40%
+      padding: 0 0 20px 0
 
     .photo
       box-sizing: border-box
@@ -315,7 +333,7 @@ for $a in (1..$photos_count)
       transform: rotateZ(-15deg) translateX(-20px) translateY(10px)
 
       &::before
-        background: url("../images/about-photo.jpg") 50% top no-repeat
+        background: url("../images/about/1.jpg") 50% top no-repeat
         background-size: contain
         top: 5%
         left: 5%
@@ -329,7 +347,7 @@ for $a in (1..$photos_count)
       transform: rotateZ(15deg) translateX(3%)
 
       &::before
-        background: url("../images/about-photo2.jpg") 50% top no-repeat
+        background: url("../images/about/2.jpg") 50% top no-repeat
         background-size: contain
         top: 5%
         left: 5%
@@ -341,25 +359,74 @@ for $a in (1..$photos_count)
     .text
       white-space: normal
       font-size: 1.2em
-      text-align: justify
-      margin: 20px 60px 0 0
+      //text-align: justify
+      margin: 10px 60px 0 0
       position: relative
       z-index: 0
       left: 30px
 
-      &::first-letter,
       & .highlight
         font-family: 'Philosopher'
-        font-size:  1.4em
-
-      & .highlight
         font-size:  1.2em
 
       p
         margin: 0 0 5px 0
 
+        &::first-letter
+          font-family: 'Philosopher'
+          font-size:  1.4em
 
+/* ======= stub ====== */
 
+.page_stub
+  .frame
+    frame(true)
+
+  .progress
+    $color = #ce92aa
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -2.5em 0 0 -2.5em
+    font-size: 16px
+    display: inline-block
+    width: 5em
+    height: 5em
+    text-indent: 999em
+    overflow: hidden
+    animation: spin 1s infinite steps(8)
+
+    &::before,
+    &::after,
+    & > div::before,
+    & > div::after
+      content: ''
+      position: absolute
+      top: 0
+      left: 2.25em
+      width: .5em
+      height: 1.5em
+      border-radius: .2em
+      background: rgba($color, 0.2)
+      box-shadow: 0 3.5em rgba($color, 0.2)
+      transform-origin: 50% 2.5em
+
+    &::before
+      background: rgba($color, 1)
+
+    &::after
+      transform: rotate(-45deg)
+      background: rgba($color, 0.8)
+
+    & > div::before
+      transform: rotate(-90deg)
+      background: rgba($color, 0.6)
+
+    & > div::after
+      transform: rotate(-135deg)
+      background: rgba($color, 0.4)
+  
 
 @keyframes border-glow
   from
@@ -371,4 +438,9 @@ for $a in (1..$photos_count)
   to
     border-top-color: rgba(#fff, .5)
     border-left-color: rgba(#fff, .5)
+
+
+@keyframes spin
+  to
+    transform: rotate(1turn)
 
