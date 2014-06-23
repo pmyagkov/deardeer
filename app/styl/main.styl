@@ -1,5 +1,16 @@
 use('../bower_components/stylus-random')
 
+
+@font-face {
+  font-family: 'Veles';
+  src:  url('fonts/veles-regular.0.9.2.eot');
+  src:  url('fonts/veles-regular.0.9.2.eot?#iefix') format('embedded-opentype'),
+        url('fonts/veles-regular.0.9.2.woff') format('woff'),
+        url('fonts/veles-regular.0.9.2.ttf.gz') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 $aside_width = 320px
 $edge_width = 50px
 $story_border_width = 7px
@@ -311,6 +322,7 @@ frame($with_inner = true, $inner_selector = '&::after')
     .photo-wrapper
       float: left
       position: relative
+      overflow: hidden
       z-index: 1
       width: 40%
       padding: 0 0 20px 0
@@ -357,6 +369,8 @@ frame($with_inner = true, $inner_selector = '&::after')
 
 
     .text
+      font-family: 'Veles';
+      line-height: 1.6
       white-space: normal
       font-size: 1.2em
       //text-align: justify
@@ -366,14 +380,14 @@ frame($with_inner = true, $inner_selector = '&::after')
       left: 30px
 
       & .highlight
-        font-family: 'Philosopher'
+        //font-family: 'Philosopher'
         font-size:  1.2em
 
       p
         margin: 0 0 5px 0
 
         &::first-letter
-          font-family: 'Philosopher'
+          //font-family: 'Philosopher'
           font-size:  1.4em
 
 /* ======= stub ====== */
@@ -443,4 +457,17 @@ frame($with_inner = true, $inner_selector = '&::after')
 @keyframes spin
   to
     transform: rotate(1turn)
+
+
+/* bacon */
+.line, .line_content {
+  position:absolute;
+  text-align:justify;
+}
+
+.line_content:after {
+  content: '';
+  display: inline-block;
+  width: 100%;
+}
 
