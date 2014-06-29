@@ -94,9 +94,22 @@ App.pages = [
 
             return this.deferred.resolve().promise();
         }
-    }, {
+    },
+    {
+        id: 'services'
+    },
+
+    {
         id: 'about',
         load: function() {
+            if (!this.inited) {
+
+                //debugger;
+                //$(".about__inner").mCustomScrollbar();
+                this.inited = true;
+            }
+
+
             this.$node.find('.text')
                 /*.bacon({
                     'type' : 'line',
@@ -111,22 +124,6 @@ App.pages = [
         id: 'contacts'
     }
 ];
-
-function commonLoad() {
-    this.deferred = $.Deferred();
-
-    this.$node.addClass('with-transition').removeClass('transparent');
-
-    return this.deferred.resolve().promise();
-}
-
-function commonUnload() {
-    this.deferred = $.Deferred();
-
-    this.$node.addClass('with-transition').addClass('transparent');
-
-    return this.deferred.resolve().promise();
-}
 
 App._getPageHash = function(pageId) {
     return pageId;

@@ -18,7 +18,7 @@ var path = require('path');
 var fs = require('fs');
 
 var q = require('q');
-
+/*
 gulp.task('upload', function () {
     var privateKey = fs.readFileSync('/Users/viking/.ssh/id_rsa');
 
@@ -33,7 +33,7 @@ gulp.task('upload', function () {
         .on('error', function(err) {
             console.log(err);
         });
-});
+});*/
 
 var paths = {
     'js': { dir: 'app/js/', glob: 'app/js/*.js', build: 'app/.build/js' },
@@ -244,7 +244,12 @@ gulp.task('big', function() {
     resize(1920, 1680, '1920x1680');
 });
 
-gulp.task('css', ['photos.json'], function() {
+gulp.task('fonts', function() {
+    return gulp.src(path.join(paths.styl.dir, 'fonts/*'))
+        .pipe(gulp.dest(path.join(paths.styl.build, 'fonts/')));
+});
+
+gulp.task('css', ['photos.json', 'fonts'], function() {
     var photos = getPhotosJson();
 
     return gulp.src(paths.styl.glob)
