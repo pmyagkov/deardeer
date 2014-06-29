@@ -102,6 +102,14 @@ App.pages = [
     {
         id: 'about',
         load: function() {
+            if (!this.inited) {
+
+                //debugger;
+                //$(".about__inner").mCustomScrollbar();
+                this.inited = true;
+            }
+
+
             this.$node.find('.text')
                 /*.bacon({
                     'type' : 'line',
