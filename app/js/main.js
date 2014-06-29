@@ -94,7 +94,12 @@ App.pages = [
 
             return this.deferred.resolve().promise();
         }
-    }, {
+    },
+    {
+        id: 'services'
+    },
+
+    {
         id: 'about',
         load: function() {
             this.$node.find('.text')
@@ -111,22 +116,6 @@ App.pages = [
         id: 'contacts'
     }
 ];
-
-function commonLoad() {
-    this.deferred = $.Deferred();
-
-    this.$node.addClass('with-transition').removeClass('transparent');
-
-    return this.deferred.resolve().promise();
-}
-
-function commonUnload() {
-    this.deferred = $.Deferred();
-
-    this.$node.addClass('with-transition').addClass('transparent');
-
-    return this.deferred.resolve().promise();
-}
 
 App._getPageHash = function(pageId) {
     return pageId;
