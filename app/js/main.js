@@ -74,25 +74,20 @@ App.pages = [
         id: 'stories',
         main: true,
         load: function() {
-            this.deferred = $.Deferred();
-
-            //this.resolveOnAnimationEnd();
+            this.$node.css('visibility', 'visible');
 
             this.$node
                 .addClass('with-transition').removeClass('transparent')
                 .find('.thumbs').removeClass('out');
-
-            return this.deferred.resolve().promise();
         },
         unload: function() {
-            this.deferred = $.Deferred();
-
-            //this.resolveOnAnimationEnd();
-
+            var that = this;
             this.$node.find('.thumbs').addClass('out').end()
                 .addClass('transparent');
 
-            return this.deferred.resolve().promise();
+            setTimeout(function() {
+                that.$node.css('visibility', 'hidden');
+            }, 1000);
         }
     },
     {
@@ -109,8 +104,7 @@ App.pages = [
                 this.inited = true;
             }
 
-
-            this.$node.find('.text')
+            this.$node.css('visibility', 'visible').find('.text')
                 /*.bacon({
                     'type' : 'line',
                     'step' : 5,
@@ -118,8 +112,7 @@ App.pages = [
                 })*/
                 .end()
                 .addClass('with-transition').removeClass('transparent');
-        },
-        unload: commonUnload
+        }
     }, {
         id: 'contacts'
     }

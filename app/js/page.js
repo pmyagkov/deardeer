@@ -19,9 +19,16 @@ App.Page.prototype.resolveOnAnimationEnd = function() {
 };
 
 function commonLoad() {
+    this.$node.css('visibility', 'visible');
+
     this.$node.addClass('with-transition').removeClass('transparent');
 }
 
 function commonUnload() {
+    var that = this;
     this.$node.addClass('with-transition').addClass('transparent');
+
+    setTimeout(function() {
+        that.$node.css('visibility', 'hidden');
+    }, 1000);
 }
