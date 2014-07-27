@@ -19,15 +19,18 @@ $mail_color = black
 
 $transition_duration = .5s
 
+$main_font = "'Philosopher', 'Helvetica', serif"
+$sec_font = "'Veles', 'Helvetica', sans-serif"
+
 body
   font-size: 14px
   margin: 0
   background-image: url("../images/wood-bg.jpg")
-  overflow: hidden
+  background-attachment: fixed
   white-space: nowrap
   width: 100%
   height: 100%
-  font-family: 'Philosopher', 'Helverica', sans-serif
+  font-family: unquote($main_font)
 
 $sizes =  1024 768,
   1280 960,
@@ -60,15 +63,16 @@ ul
 a
   color: black
 
-page()
+page($bottom = false)
   position: absolute
   top: $edge_width
   left: $story_border_width
-  bottom: $edge_width
-  right: $edge_width + 80
+  right: $edge_width
+  if $bottom
+    bottom: $edge_width
 
 frame($with_inner = true, $inner_selector = '&::after')
-  page()
+  page(true)
   box-sizing: border-box
   background-size: cover
   background-position: 50%
@@ -107,9 +111,11 @@ frame($with_inner = true, $inner_selector = '&::after')
 
 .transparent
   opacity: 0 !important
+  // спрятанные слои не должны влиять на скролл показанного
+  overflow: hidden
 
 .flowers
-  position: absolute
+  position: fixed
   top: 0
   left: 0
   right: 0
@@ -127,14 +133,13 @@ frame($with_inner = true, $inner_selector = '&::after')
   background-image: url("../images/flowers/back-layer.png")
 
 .cover
-    content: ''
-    position: absolute
-    top: 0
-    right: 0
-    left: 0
-    bottom: 0
-    background: linear-gradient(90deg, rgba(255,255,255,0.6) 100px, rgba(255,255,255,0.8) 300px, rgba(255,255,255,0) 400px)
-
+  content: ''
+  position: fixed
+  top: 0
+  right: 0
+  left: 0
+  bottom: 0
+  background: linear-gradient(90deg, rgba(255,255,255,0.5) 100px, rgba(255,255,255,0.4) 300px, rgba(255,255,255,0) 2000px)
 
 
 .anchor
@@ -210,7 +215,7 @@ frame($with_inner = true, $inner_selector = '&::after')
   width: $aside_width
   height: 100%
   //background-repeat: repeat-y
-  position: absolute
+  position: fixed
   display: block
   color: rgba(#fff, 0.5)
   font-size: 24px
@@ -271,12 +276,15 @@ frame($with_inner = true, $inner_selector = '&::after')
   height: 100vh
   display: block
 
-  background: rgba(255,255,255,.4)
+  /*background-color: rgba(255,255,255,.4)
+  background-attachment: fixed*/
 
   &.with-transition
     transition: opacity 0.5s ease
 
 .page_stories
+  overflow: hidden
+
   & .content
     position: relative
     height: 100%
@@ -373,7 +381,7 @@ frame($with_inner = true, $inner_selector = '&::after')
 /* ==== about ==== */
 .page_about
   .about
-    frame(true, '.inner')
+    page()
 
     .inner
       height: 100%
@@ -383,7 +391,6 @@ frame($with_inner = true, $inner_selector = '&::after')
     .photo-wrapper
       float: left
       position: relative
-      overflow: hidden
       z-index: 1
       width: 40%
       padding: 0 20px 40px 0
@@ -419,10 +426,10 @@ frame($with_inner = true, $inner_selector = '&::after')
 
 
     .text
-      font-family: 'Veles';
+      font-family: unquote($main_font);
       line-height: 1.6
       white-space: normal
-      font-size: 1.2em
+      font-size: 1.3em
       //text-align: justify
       margin: 10px 60px 0 0
       position: relative
@@ -430,25 +437,18 @@ frame($with_inner = true, $inner_selector = '&::after')
       left: 30px
 
       & .highlight
-        //font-family: 'Philosopher'
         font-size:  1.2em
 
       p
         margin: 0 0 5px 0
 
         &::first-letter
-          //font-family: 'Philosopher'
           font-size:  1.4em
 
 /* ======= services ====== */
 .page_services
   .services
-    frame(true, '.inner')
-
-    .inner
-      height: 100%
-      overflow: auto
-      position: relative
+    page(true)
 
     for $i in (1..4)
       .photo:nth-child({$i}) .photo__inner
@@ -478,7 +478,7 @@ frame($with_inner = true, $inner_selector = '&::after')
         position: absolute
         bottom: 0
         left: 0
-        font-family: 'Veles', 'Helvetica'
+        font-family: unquote($sec_font)
         text-align: center
         font-size: 1.7vw
         margin-bottom: 4px
@@ -489,26 +489,26 @@ frame($with_inner = true, $inner_selector = '&::after')
 
 
     .photo:nth-child(1)
-      top: 25%
+      top: 23%
       left: 25%
 
       transform: rotateZ(-5deg) translateX(3%) translateZ(0)
 
     .photo:nth-child(2)
-      top: 25%
+      top: 23%
       left: 75%
       margin-left: -23%
 
       transform: rotateZ(3deg) translateX(3%) translateZ(0)
 
     .photo:nth-child(3)
-      top: 75%
+      top: 78%
       left: 25%
 
       transform: rotateZ(7deg) translateX(3%) translateZ(0)
 
     .photo:nth-child(4)
-      top: 75%
+      top: 78%
       left: 75%
       margin-left: -23%
 
@@ -568,8 +568,7 @@ frame($with_inner = true, $inner_selector = '&::after')
 /* ======= stub ====== */
 
 .page_stub
-  .frame
-    frame(true)
+  page()
 
   .progress
     $color = #ce92aa
