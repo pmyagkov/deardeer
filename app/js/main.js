@@ -50,14 +50,26 @@ App._getPage = function(id) {
 
 
 App._initPages = function() {
+    var $pages = $('.page');
+    App._isSPA = false;
+    if ($pages.length === App.pages.length) {
+        App._isSPA = true;
+    }
+
     App.pages = _.map(App.pages, function(p) {
         var page = new App.Page(p);
+        page.$node = $('.page_' + page.id);
+
         if (page.main) {
             Finch.route('/', App._go.bind(App, page));
-        }
-        Finch.route(App._getPageHash(page.id), App._go.bind(App, page));
+            Finch.route('!', App._go.bind(App, page));
+        } else {
+            Finch.route(App._getPageHash(page.id), App._go.bind(App, page));
+            if (App._isSPA) {
+                page.$node.addClass('transparent');
+            }
 
-        page.$node = $('.page_' + page.id)
+        }
 
         return page;
     });
@@ -68,7 +80,6 @@ App._initPages = function() {
 App.pages = [
     {
         id: 'stub'
-
     },
     {
         id: 'stories',
@@ -119,7 +130,7 @@ App.pages = [
 ];
 
 App._getPageHash = function(pageId) {
-    return pageId;
+    return '!' + pageId;
 };
 
 /**
@@ -185,9 +196,7 @@ App._initGallery = function() {
 
     App._currentPhoto = 0;
 
-
-
-    var height = $('body').height();
+    var height = $('.cover').height();
     var $thumb = $('.thumb:first');
     App._thumbHeight = $thumb.outerHeight() + parseInt($thumb.css('margin-top')) + parseInt($thumb.css('margin-bottom'));
 
@@ -239,10 +248,5 @@ App.init = function() {
 };
 
 jQuery(function($) {
-
     App.init();
-
-
-
-
 });
