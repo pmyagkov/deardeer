@@ -3,7 +3,6 @@ var stylus = require('gulp-stylus');
 var jade = require('gulp-jade');
 var concat = require('gulp-concat');
 var include = require('gulp-file-include');
-var sequence = require('run-sequence');
 var debug = require('gulp-debug');
 var autoprefixer = require('gulp-autoprefixer');
 var imageResize = require('gulp-image-resize');
@@ -12,7 +11,8 @@ var rename = require('gulp-rename');
 var glob = require('glob');
 var _ = require('lodash');
 var borschik = require('gulp-borschik');
-var scp = require('gulp-scp2');
+var through = require('through');
+
 
 var path = require('path');
 var fs = require('fs');
@@ -39,7 +39,14 @@ var paths = {
     'js': { dir: 'app/js/', glob: 'app/js/*.js', build: 'app/.build/js' },
     'lib': { dir: 'app/js/lib/', glob: 'app/js/lib/*.js', build: 'app/.build/js' },
     'styl': { dir: 'app/styl/', glob: 'app/styl/*.styl', build: 'app/.build/styl' },
-    'jade': { dir: 'app/jade/', glob: 'app/jade/*.jade', build: 'app/.build' },
+    'jade': {
+        dir: 'app/jade/', glob: 'app/jade/wrappers/*.jade', build: 'app/.build',
+        pages: {
+            glob: 'app/jade/pages/*.jade',
+            dir: 'app/jade/pages/',
+            htmlGlob: 'app/jade/pages/*.html'
+        }
+    },
     'photos': { dir: 'app/images/photos/', glob: 'app/images/photos/*.jpg'},
     'images': { dir: 'app/images/', glob: 'app/images/**/*', build: 'app/.build/images'},
     'build': { dir: 'app/.build/', glob: 'app/.build/*'}
@@ -273,19 +280,10 @@ gulp.task('html', ['photos.json'], function() {
 
     return gulp.src(paths.jade.glob)
         .pipe(jade({locals: {photos: photosObj}}))
-        .pipe(gulp.dest(paths.jade.dir));
-
-});
-
-
-gulp.task('html-include', ['html'], function() {
-    return gulp.src([paths.jade.dir + 'index.html'])
-        //.pipe(debug({verbose: true}))
-        .pipe(include('@@'))
         .pipe(gulp.dest('app/.build/'));
 });
 
-gulp.task('markup', ['html-include', 'images', 'js', 'css']);
+gulp.task('markup', ['images', 'js', 'css', 'html']);
 
 gulp.task('watch', function() {
     var photosWatchGlob = [paths.photos.dir + '/*', paths.photos.dir + '/**/*', '!' + paths.photos.dir + '/photos.json'];
@@ -293,7 +291,7 @@ gulp.task('watch', function() {
     gulp.watch(paths.js.glob, ['js']);
     gulp.watch(paths.lib.glob, ['lib']);
     gulp.watch(paths.styl.glob, ['css']);
-    gulp.watch([paths.jade.glob, 'app/images/*.svg'], ['markup']);
+    gulp.watch([paths.jade.pages.glob, 'app/images/*.svg'], ['markup']);
     gulp.watch(photosWatchGlob, ['js', 'markup']);
     // здесь нужно перезапускать процесс gulp'a по изменению gulpfile
     //gulp.watch('gulpfileza.js', ['default']);
