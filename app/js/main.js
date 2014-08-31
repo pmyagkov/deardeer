@@ -196,7 +196,7 @@ App._initGallery = function() {
 
     App._currentPhoto = 0;
 
-    var height = $('.cover').height();
+    var height = $('.cover').height() - 40 * 2; // высоты двух стрелок
     var $thumb = $('.thumb:first');
     App._thumbHeight = $thumb.outerHeight() + parseInt($thumb.css('margin-top')) + parseInt($thumb.css('margin-bottom'));
 
@@ -206,14 +206,26 @@ App._initGallery = function() {
 
     App._thumbsNumber = $thumbs.length;
 
+    var $thumbsLi = $('.thumbs');
+
+    // двигаем список с фотографиями, чтобы был центрирован относительно рамка
+    var offsetTop = (height - App._thumbsPerRow * App._thumbHeight) / 2;
+    $thumbsLi.css('top', parseInt($thumbsLi.css('top')) + offsetTop);
 
 
     $('.arrows .change').click(function(e) {
-        var direction = $(e.target).closest('.change').is('.down');
-        App._slideToPhoto(direction);
+        var $target = $(e.currentTarget);
+
+        var direction = $target.is('.down');
+        if ($target.is('.arrows_thumbs *')) {
+            var next = App._currentPhoto + (direction ? 1 : -1) * App._thumbsPerRow;
+        } else {
+            next = direction;
+        }
+        App._slideToPhoto(next);
     });
 
-    $('.thumbs').on('click', '.thumb', function(e) {
+    $thumbsLi.on('click', '.thumb', function(e) {
         var $target = $(e.target).closest('.thumb');
         var photoId = Number($target.data('id'));
 

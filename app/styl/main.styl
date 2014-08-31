@@ -289,14 +289,16 @@ frame($with_inner = true, $inner_selector = '&::after')
     position: relative
     height: 100%
 
+
   & .arrows
     position: absolute
+    z-index: 10
+
+  & .arrows_photo
     top: $edge_width
     left: $edge_width
     bottom: $edge_width
     right: 145px + $edge_width
-
-    z-index: 10
 
     & .up,
     & .down
@@ -309,21 +311,63 @@ frame($with_inner = true, $inner_selector = '&::after')
       position: relative
 
       & .down-inner
-        content: ''
+        cursor: url(../images/arrows/down.png), auto
         position: absolute
         top: 0
         left: 0
         right: 0
         bottom: 33px
-        cursor: url(../images/arrows/down.png), auto
 
 
-  & .thumbs
+  & .arrows_thumbs
+    top: 0
+    bottom: 0
+    right: 0
+
+    & .up,
+    & .down
+      height: 40px
+      width: 200px
+      cursor: pointer
+
+    & .up
+      position: absolute
+      top: 0
+      right: 0
+
+      &::before
+        content: ''
+        margin: 7px 205px 0 60px
+        background-image: url(../images/arrows/up.png)
+        background-size: contain
+        width: 30%
+        height: 100%
+        position: absolute
+        background-repeat: no-repeat
+        box-sizing: border-box
+
+    & .down
+      position: absolute
+      right: 0
+      bottom: 0
+
+      &::before
+        content: ''
+        background-image: url(../images/arrows/down.png)
+        background-size: contain
+        width: 30%
+        height: 100%
+        position: absolute
+        background-repeat: no-repeat
+        box-sizing: border-box
+        margin: 0px 205px 7px 60px
+
+& .thumbs
     font-size: 16px
     list-style-type: none
     position: absolute
     right: 0
-    top: 0
+    top: 33px
     padding: 30px 10px 10px 30px
     box-sizing: border-box
     height: 100%
