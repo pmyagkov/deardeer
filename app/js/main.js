@@ -209,7 +209,7 @@ App._initGallery = function() {
     var $thumbsLi = $('.thumbs');
 
     // двигаем список с фотографиями, чтобы был центрирован относительно рамка
-    var offsetTop = (height - App._thumbsPerRow * App._thumbHeight) / 2;
+    var offsetTop = (height - App._thumbsPerRow * App._thumbHeight) / 2 + 15; // подобрано экспериментально
     $thumbsLi.css('top', parseInt($thumbsLi.css('top')) + offsetTop);
 
 
@@ -217,8 +217,14 @@ App._initGallery = function() {
         var $target = $(e.currentTarget);
 
         var direction = $target.is('.down');
+        var next;
         if ($target.is('.arrows_thumbs *')) {
-            var next = App._currentPhoto + (direction ? 1 : -1) * App._thumbsPerRow;
+            var currentRow = Math.floor(App._currentPhoto / App._thumbsPerRow);
+            if (direction) {
+                next = (currentRow + 1) * App._thumbsPerRow;
+            } else {
+                next = (currentRow - 1) * App._thumbsPerRow + App._thumbsPerRow - 1;
+            }
         } else {
             next = direction;
         }
