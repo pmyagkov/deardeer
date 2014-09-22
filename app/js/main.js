@@ -9,6 +9,8 @@ App._go = function(next) {
 
     var def = $.Deferred().resolve();
 
+    next.init(App._rootObj);
+
     if (App.pages.current) {
         if (next.id === App.pages.current.id) {
             return;
@@ -58,13 +60,12 @@ App._initPages = function() {
 
     App.pages = _.map(App.pages, function(p) {
         var page = new App.Page(p);
-        page.$node = $('.page_' + page.id);
 
         if (page.main) {
             Finch.route('/', App._go.bind(App, page));
             Finch.route('!', App._go.bind(App, page));
         } else {
-            Finch.route(App._getPageHash(page.id), App._go.bind(App, page));
+            Finch.route(page.getUrl(), App._go.bind(App, page));
             if (App._isSPA) {
                 page.$node.addClass('transparent');
             }
@@ -83,26 +84,29 @@ App.pages = [
     },
     {
         id: 'stories',
-        main: true,
-        load: function() {
-            this.$node.css('visibility', 'visible');
 
-            this.$node
-                .addClass('with-transition').removeClass('transparent')
-                .find('.thumbs').removeClass('out');
-        },
-        unload: function() {
-            var that = this;
-            this.$node.find('.thumbs').addClass('out').end()
-                .addClass('transparent');
-
-            setTimeout(function() {
-                that.$node.css('visibility', 'hidden');
-            }, 1000);
-        }
     },
     {
-        id: 'services'
+        id: 'services',
+        main: true,
+        load: function() {
+            if (!this.inited) {
+                this.$node.find('.photo').click(function(e) {
+                    var fragment = $(e.currentTarget).data('fragment');
+                    location.hash = fragment;
+                });
+
+                this.inited = true;
+            }
+
+            this.$node.removeClass('transparent');
+
+        }
+    },
+
+    {
+        id: 'service',
+        url: 'services/bouquets'
     },
 
     {
@@ -129,9 +133,7 @@ App.pages = [
     }
 ];
 
-App._getPageHash = function(pageId) {
-    return '!' + pageId;
-};
+App.baseUrl = '!';
 
 /**
  * {number|boolean}

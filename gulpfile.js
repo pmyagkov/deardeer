@@ -12,6 +12,7 @@ var glob = require('glob');
 var _ = require('lodash');
 var borschik = require('gulp-borschik');
 var through = require('through');
+var through2 = require('through2');
 
 
 var path = require('path');
@@ -275,12 +276,36 @@ function getPhotosJson() {
     return JSON.parse(fs.readFileSync(path.join(paths.photos.dir, 'photos.json'), {encoding: 'utf-8'}));
 }
 
-gulp.task('html', ['photos.json'], function() {
-    var photosObj = getPhotosJson();
-
-    return gulp.src(paths.jade.glob)
-        .pipe(jade({locals: {photos: photosObj}}))
+gulp.task('html', function() {
+    return gulp.src(paths.jade.dir + 'index.jade')
+        .pipe(jade())
         .pipe(gulp.dest('app/.build/'));
+});
+
+gulp.task('templates', function() {
+    function modify() {
+        function transform(file, enc, callback) {
+            if (!file.isBuffer()) {
+                this.push(file);
+                callback();
+                return;
+            }
+            var funcName = path.basename(file.path, '.js');
+            var from = 'function template(locals) {';
+            var to = 'function ' + funcName + '(locals) {';
+            var contents = file.contents.toString().replace(from, to);
+            file.contents = new Buffer(contents);
+            this.push(file);
+            callback();
+        }
+        return through2.obj(transform);
+    }
+
+    return gulp.src(paths.jade.dir + 'pages/*.jade')
+        .pipe(jade({client: true}))
+        .pipe(modify())
+        .pipe(concat('templates.js'))
+        .pipe(gulp.dest(paths.js.build));
 });
 
 gulp.task('markup', ['images', 'js', 'css', 'html']);

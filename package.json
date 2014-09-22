@@ -26,7 +26,8 @@
     "borschik": "~1.0.5",
     "gulp-uglify": "~0.3.0",
     "gulp-scp2": "~0.1.1",
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "through2": "~0.6.2"
   },
   "engines": {
     "node": ">=0.10.0"

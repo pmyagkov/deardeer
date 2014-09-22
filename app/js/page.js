@@ -1,34 +1,107 @@
-App.Page = function(options) {
-    _.extend(this, options);
+(function() {
+    App.Page = function(options) {
+        _.extend(this, options);
+        this._inited = false;
+    };
 
-    if (!_.isFunction(this.load)) {
-        this.load = commonLoad;
+    App.Page.prototype.init = function() {
+        if (this._inited) {
+            return;
+        }
+
+        if (_.isFunction(window[this.id])) {
+            this.$node = $(window[this.id](this.model)).appendTo($('body'));
+            this._inited = true;
+        }
+    };
+
+    App.Page.prototype.load = function load() {
+        this.$node.addClass('with-transition').removeClass('transparent');
+    };
+
+    App.Page.prototype.unload = function unload() {
+        this.$node.addClass('with-transition').removeClass('transparent');
+    };
+
+    /*App.Page.prototype.resolveOnAnimationEnd = function() {
+        var that = this;
+
+        that.$node.one('transitionend mozTransitionEnd webkitTransitionEnd oTransitonEnd', function() {
+            that.deferred.resolve();
+        });
+    };*/
+
+    App.Page.prototype.getUrl = function() {
+        var fragment = this.id;
+        if (this.url) {
+            fragment = this.url;
+        }
+
+        return App.baseUrl + fragment;
+    };
+})();
+
+(function() {
+    App.StoriesPage = function(options) {
+        this.super(options);
+    };
+
+    App.StoriesPage.prototype = new App.Page();
+    App.StoriesPage.prototype.super = App.Page;
+
+    App.StoriesPage.prototype.load = function() {
+        this.$node.css('visibility', 'visible');
+
+        this.$node
+            .addClass('with-transition').removeClass('transparent')
+            .find('.thumbs').removeClass('out');
+    };
+
+    App.StoriesPage.prototype.unload =  function() {
+        this.$node.find('.thumbs').addClass('out').end()
+            .addClass('transparent');
     }
 
-    if (!_.isFunction(options.unload)) {
-        this.unload = commonUnload;
-    }
-};
+})();
 
-App.Page.prototype.resolveOnAnimationEnd = function() {
-    var that = this;
+(function() {
+    App.StoriesPage = function(options) {
+        this.super(options);
+    };
 
-    that.$node.one('transitionend mozTransitionEnd webkitTransitionEnd oTransitonEnd', function() {
-        that.deferred.resolve();
-    });
-};
+    App.StoriesPage.prototype = new App.Page();
+    App.StoriesPage.prototype.super = App.Page;
 
-function commonLoad() {
-    this.$node.css('visibility', 'visible');
+    App.StoriesPage.prototype.load = function() {
+        this.$node.css('visibility', 'visible');
 
-    this.$node.addClass('with-transition').removeClass('transparent');
-}
+        this.$node
+            .addClass('with-transition').removeClass('transparent')
+            .find('.thumbs').removeClass('out');
+    };
 
-function commonUnload() {
-    var that = this;
-    this.$node.addClass('with-transition').addClass('transparent');
+    App.StoriesPage.prototype.unload =  function() {
+        this.$node.find('.thumbs').addClass('out').end()
+            .addClass('transparent');
+    };
 
-    setTimeout(function() {
-        that.$node.css('visibility', 'hidden');
-    }, 1000);
-}
+})();
+
+(function() {
+    App.ServicesPage = function(options) {
+        this.super(options);
+    };
+
+    App.ServicesPage.prototype = new App.Page();
+    App.ServicesPage.prototype.super = App.Page;
+
+    App.ServicesPage.prototype.init = function() {
+        this.super.proto.init.call(this);
+
+        this.$node.find('.photo').click(function(e) {
+            var fragment = $(e.currentTarget).data('fragment');
+            location.hash = fragment;
+        });
+    };
+
+})();

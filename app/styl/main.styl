@@ -113,6 +113,8 @@ frame($with_inner = true, $inner_selector = '&::after')
   opacity: 0 !important
   // спрятанные слои не должны влиять на скролл показанного
   overflow: hidden
+  z-index: -1
+  position: relative
 
 .flowers
   position: fixed
