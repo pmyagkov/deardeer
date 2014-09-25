@@ -1,11 +1,18 @@
+require('jade/runtime.js');
+
 var App = {};
 
-/* borschik:include:page.js */
 
-App._go = function(next) {
+/* borschik:include:pages/page.js */
+/* borschik:include:pages/storiesPage.js */
+/* borschik:include:pages/servicesPage.js */
+/* borschik:include:pages/galleryPage.js */
+
+App.go = function(next) {
     console.log('Renderring page "' + next.id + '"');
 
     var stub = App._getPage('stub');
+    stub.init();
 
     var def = $.Deferred().resolve();
 
@@ -38,7 +45,7 @@ App._go = function(next) {
 
         return def.promise();
     }).then(function() {
-        stub.$node.hide();
+        stub.unload();
     });
 };
 
@@ -58,14 +65,21 @@ App._initPages = function() {
         App._isSPA = true;
     }
 
-    App.pages = _.map(App.pages, function(p) {
-        var page = new App.Page(p);
+    App.pages = _.map(App.pages, function(options) {
+        var type = 'Page';
+        if (options.type && _.isFunction(App[options.type])) {
+            type = options.type;
+        }
+
+        options.model = App._rootObj;
+
+        var page = new App[type](options);
 
         if (page.main) {
-            Finch.route('/', App._go.bind(App, page));
-            Finch.route('!', App._go.bind(App, page));
+            Finch.route('/', App.go.bind(App, page));
+            Finch.route('!', App.go.bind(App, page));
         } else {
-            Finch.route(page.getUrl(), App._go.bind(App, page));
+            Finch.route(page.getUrl(), App.go.bind(App, page));
             if (App._isSPA) {
                 page.$node.addClass('transparent');
             }
@@ -106,33 +120,15 @@ App.pages = [
 
 App.baseUrl = '!';
 
-/**
- * {number|boolean}
- * @param id 0-based index of the photo
- */
-App._slideToPhoto = function(id) {
-
-
-
-};
-
-App._initGallery = function() {
-
-
-
-
-};
 
 App.init = function() {
     App._rootObj = _.extend(App._rootObj || {}, {
-        'photos': /* borschik:include:../images/photos/photos.json */
+        'photos': /* borschik:include:../../images/photos/photos.json */
     });
 
     App._initPages();
-
-    App._initGallery();
 };
 
-jQuery(function($) {
+jQuery(function() {
     App.init();
 });

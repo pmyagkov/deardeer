@@ -13,6 +13,7 @@ var _ = require('lodash');
 var borschik = require('gulp-borschik');
 var through = require('through');
 var through2 = require('through2');
+var browserify = require('gulp-browserify');
 
 
 var path = require('path');
@@ -37,7 +38,7 @@ gulp.task('upload', function () {
 });*/
 
 var paths = {
-    'js': { dir: 'app/js/', glob: 'app/js/*.js', build: 'app/.build/js' },
+    'js': { dir: 'app/js/', glob: 'app/js/custom/**/*.js', build: 'app/.build/js' },
     'lib': { dir: 'app/js/lib/', glob: 'app/js/lib/*.js', build: 'app/.build/js' },
     'styl': { dir: 'app/styl/', glob: 'app/styl/*.styl', build: 'app/.build/styl' },
     'jade': {
@@ -183,8 +184,8 @@ gulp.task('lib', function() {
         'app/bower_components/jquery/dist/jquery.min.js',
         'app/bower_components/es5-shim/es5-shim.min.js',
         'app/bower_components/lodash/dist/lodash.min.js',
-        'app/js/lib/finch.min.js',
-        'app/js/lib/bacon.jquery.js'
+        'app/bower_components/jade/runtime.js',
+        'app/js/lib/finch.min.js'
     ];
 
     return gulp.src(libs)
@@ -192,6 +193,16 @@ gulp.task('lib', function() {
         //.pipe(borschik({tech: 'js', minimize: false}))
         .pipe(concat('lib.js'))
         .pipe(gulp.dest(path.join(paths.js.build, 'lib')));
+});
+
+gulp.task('js2', ['lib', 'photos.json'], function() {
+    return gulp.src('app/js/custom/main.js')
+        .pipe(borschik({minimize: false, tech: 'js'}))
+        .pipe(browserify())
+        /*.pipe(rename(function(path) {
+         path.basename = "_main";
+         }))*/
+        .pipe(gulp.dest(paths.js.build));
 });
 
 gulp.task('js', ['lib', 'photos.json'], function() {

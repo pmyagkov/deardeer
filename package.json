@@ -27,7 +27,9 @@
     "gulp-uglify": "~0.3.0",
     "gulp-scp2": "~0.1.1",
     "through": "~2.3.4",
-    "through2": "~0.6.2"
+    "through2": "~0.6.2",
+    "gulp-browserify": "~0.5.0",
+    "vinyl-source-stream": "~1.0.0"
   },
   "engines": {
     "node": ">=0.10.0"
