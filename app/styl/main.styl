@@ -72,7 +72,7 @@ page($bottom = false)
     bottom: $edge_width
 
 frame($with_inner = true, $inner_selector = '&::after')
-  page(true)
+  height: 100%
   box-sizing: border-box
   background-size: cover
   background-position: 50%
@@ -100,10 +100,10 @@ frame($with_inner = true, $inner_selector = '&::after')
 /* ========= common ========= */
 
 .photo
-  box-sizing: border-box
   background: rgba(#FFF, .75)
-  position: relative
   box-shadow: 2px 2px 10px rgba(0, 0, 0, .5)
+  box-sizing: border-box
+  position: relative
 
   &::before
     content: ''
@@ -113,6 +113,8 @@ frame($with_inner = true, $inner_selector = '&::after')
   opacity: 0 !important
   // спрятанные слои не должны влиять на скролл показанного
   overflow: hidden
+  z-index: -1
+  position: relative
 
 .flowers
   position: fixed
@@ -139,7 +141,7 @@ frame($with_inner = true, $inner_selector = '&::after')
   right: 0
   left: 0
   bottom: 0
-  background: linear-gradient(90deg, rgba(255,255,255,0.5) 100px, rgba(255,255,255,0.4) 300px, rgba(255,255,255,0) 2000px)
+  background: linear-gradient(90deg, rgba(255,255,255,0.5) 100px, rgba(255,255,255,0.4) 300px, rgba(255,255,255,.9) 2000px)
 
 
 .anchor
@@ -154,7 +156,7 @@ frame($with_inner = true, $inner_selector = '&::after')
     height: 20px
     position: absolute
     left: -27px
-    top: 0px
+    top: 7px
 
     background-image: url("../images/leaves.svg")
     background-size: cover;
@@ -263,12 +265,6 @@ frame($with_inner = true, $inner_selector = '&::after')
 
 
 
-
-
-
-
-
-
 .page
   position: absolute
   left: $aside_width
@@ -282,42 +278,73 @@ frame($with_inner = true, $inner_selector = '&::after')
   &.with-transition
     transition: opacity 0.5s ease
 
-.page_stories
-  overflow: hidden
-
-  & .content
-    position: relative
-    height: 100%
+.arrows
+  position: absolute
+  z-index: 10
 
 
-  & .arrows
+.thumbs-container
+  position: absolute
+  right: 0
+  top: 0
+  height: 100vh
+  width: 12em
+  margin: -50px -50px 0 0
+  transition: right .3s ease
+
+  &.out
+    right: -10em
+
+  &.semi-out
+    right: -4em
+    opacity: .5
+
+    & .placeholder
+      display: block
+
+  & .placeholder
     position: absolute
-    z-index: 10
+    top: 0
+    left: 0
+    bottom: 0
+    right: 0
+    display: none
+    z-index: 5
 
-  & .arrows_photo
-    top: $edge_width
-    left: $edge_width
-    bottom: $edge_width
-    right: 145px + $edge_width
+  .thumbs
+    font-size: 16px
+    list-style-type: none
+    position: absolute
+    top: 33px
+    padding: 0 10px 10px 30px
+    box-sizing: border-box
+    height: 100%
+    transition: margin-top .3s ease .2s
+    z-index: 2
+    border-top: 0px transparent solid
 
-    & .up,
-    & .down
-      height: 50%
+    li
+      margin: -20px 0 0 0
+      padding: 10px 10px 40px 10px
+      width: 9em
+      height: 6em
+      opacity: 0.8
+      cursor: pointer
+      box-shadow: -1px -1px 10px rgba(0, 0, 0, .5)
+      transition: transform .3s ease-out 0s, border-color .3s ease-out 0s, opacity .3s ease-out
 
-    & .up
-      cursor: url(../images/arrows/up.png), auto
+      *:not(.semi-out) &:hover,
+      &.current
+        transform: translateX(-20px) rotateZ(0) translateZ(0)!important
+        opacity: 1
 
-    & .down
-      position: relative
+      &.current
+        cursor: pointer
 
-      & .down-inner
-        cursor: url(../images/arrows/down.png), auto
-        position: absolute
-        top: 0
-        left: 0
-        right: 0
-        bottom: 33px
-
+  for $a in (1..$photos_count)
+    & .thumb:nth-child({$a})
+      transform: rotateZ(random(-10, 10) deg) translateZ(0)
+      background: url("../images/photos/" $a "/thumb.jpg") 50% 10px no-repeat, rgba(#fff,1)
 
   & .arrows_thumbs
     top: 0
@@ -327,7 +354,7 @@ frame($with_inner = true, $inner_selector = '&::after')
     & .up,
     & .down
       height: 40px
-      width: 200px
+      width: 11em
       cursor: pointer
 
     & .up
@@ -362,64 +389,18 @@ frame($with_inner = true, $inner_selector = '&::after')
         box-sizing: border-box
         margin: 2px 205px 7px 60px
 
-& .thumbs
-    font-size: 16px
-    list-style-type: none
-    position: absolute
-    right: 0
-    top: 33px
-    padding: 0 10px 10px 30px
-    box-sizing: border-box
-    height: 100%
-    transition: margin-top .3s ease .2s, right .3s ease
-    z-index: 2
+.page
+  position: absolute
+  left: $aside_width
+  right: 0
+  height: 100vh
+  display: block
 
-    &.out
-      right: -230px
+  /*background-color: rgba(255,255,255,.4)
+  background-attachment: fixed*/
 
-    li
-      margin: -20px 0 0 0
-      padding: 10px 10px 40px 10px
-      width: 9em
-      height: 6em
-      opacity: 0.8
-      cursor: pointer
-      box-shadow: -1px -1px 10px rgba(0, 0, 0, .5)
-      transition: transform .3s ease-out 0s, border-color .3s ease-out 0s, opacity .3s ease-out
-
-      &:hover,
-      &.current
-        transform: translateX(-20px) rotateZ(0) translateZ(0)!important
-        opacity: 1
-
-      &.current
-        cursor: pointer
-
-  for $a in (1..$photos_count)
-    .story:nth-child({$a}) .story__image
-      background-image: url("../images/photos/" $a "/1920x1680.jpg")
-      background-size: cover
-
-    .thumb:nth-child({$a})
-      transform: rotateZ(random(-10, 10) deg) translateZ(0)
-      background: url("../images/photos/" $a "/thumb.jpg") 50% 10px no-repeat, rgba(#fff,1)
-
-  .stories
-    margin-top: 0
-    transition: margin-top $transition_duration ease
-
-  .story
-    height: 100vh
-    position: relative
-
-    & .story-inner
-      frame(true)
-
-    & .story__image
-      width: 100%
-      height: 100%
-      position: relative
-
+  &.with-transition
+    transition: opacity 0.5s ease
 
 
 /* ==== about ==== */
@@ -489,74 +470,246 @@ frame($with_inner = true, $inner_selector = '&::after')
         &::first-letter
           font-size:  1.4em
 
+photo()
+  .photo
+    width: 0
+    padding: 35% 0 0 43%
+    box-sizing: border-box
+
+    .photo__inner
+      position: absolute
+      top: 5%
+      left: 5%
+      right: 5%
+      bottom: 0
+      background-size: contain
+      background-position: 50% 0
+      background-repeat: no-repeat
+    //box-shadow: inset 0px 0px 9px rgba(#000,0.6)
+
+    .caption
+      display: inline-block
+      width: 100%
+      position: absolute
+      bottom: 0
+      left: 0
+      font-family: unquote($sec_font)
+      text-align: center
+      font-size: 1.7vw
+      margin-bottom: 4px
+      overflow: hidden
+      text-overflow: ellipsis
+      cursor: pointer
+
+photo-common-props()
+  position: absolute
+  margin-left: -20%
+  margin-top: -17%
+
+photo1-props($need_transform = true)
+  photo-common-props()
+  top: 23%
+  left: 25%
+  if ($need_transform)
+    transform: rotateZ(-5deg) translateX(3%) translateZ(0)
+  else
+    transform: none
+
+photo2-props($need_transform = true)
+  photo-common-props()
+  top: 23%
+  left: 75%
+  if ($need_transform)
+    transform: rotateZ(3deg) translateX(3%) translateZ(0)
+  else
+    transform: none
+
+photo3-props($need_transform = true)
+  photo-common-props()
+  top: 78%
+  left: 25%
+  if ($need_transform)
+    transform: rotateZ(7deg) translateX(3%) translateZ(0)
+  else
+    transform: none
+
+photo4-props($need_transform = true)
+  photo-common-props()
+  top: 78%
+  left: 75%
+  margin-left: -23%
+  if ($need_transform)
+    transform: rotateZ(-5deg) translateX(3%) translateZ(0)
+  else
+    transform: none
+
+
 /* ======= services ====== */
 .page_services
   .services
     page(true)
 
+    & .photo:nth-child(1)
+      photo1-props()
+
+    & .photo:nth-child(2)
+      photo2-props()
+
+    & .photo:nth-child(3)
+      photo3-props()
+
+    & .photo:nth-child(4)
+      photo4-props()
+
     for $i in (1..4)
-      .photo:nth-child({$i}) .photo__inner
+      & .photo:nth-child({$i}) .photo__inner
         background-image: url("../images/services/" $i ".jpg")
 
-    .photo
-      position: absolute
-      padding: 35% 0 0 43%
-      margin-left: -20%
-      margin-top: -17%
-      box-sizing: border-box
+    photo()
+    & .photo
+      cursor: pointer
+      transition: transform .5s ease
+/*
+      &:hover
+        transform: rotateZ(0)
+*/
 
-      .photo__inner
-        position: absolute
-        top: 5%
-        left: 5%
-        right: 5%
-        bottom: 0
-        background-size: contain
-        background-position: 50% 0%
-        background-repeat: no-repeat
-        //box-shadow: inset 0px 0px 9px rgba(#000,0.6)
+
+
+    &.out_bouquets
+      & .photo:nth-child(1)
+        transform: none
+
+      & .photo:nth-child(2),
+      & .photo:nth-child(4)
+        transform: translateX(150%)
+      & .photo:nth-child(3)
+        transform: translateY(200%)
+
+    &.out_wedding-decor
+      & .photo:nth-child(2)
+        photo-props1(false)
+
+      /*.photo:nth-child(4)
+        transform: translateX(150%)
+      .photo:nth-child(3)
+        transform: translateY(200%)*/
+
+
+/* ======= service ======= */
+.page_service
+  height: 100vh
+  overflow: hidden
+
+  thumbs()
+  .service
+    page(true)
+
+    .description
+      photo()
+
+      .photo
+        display: block
+        float: left
+        margin: 0 5% 5% 0
 
       .text
-        display: inline-block
-        width: 100%
+        white-space: normal
+        font-size: 1.3em
+        margin-right: 9%
+
+      &.out
         position: absolute
-        bottom: 0
+        opacity: 0
+
+    &.service_bouquets
+      .description
+        .photo
+          .photo__inner
+            background-image: url("../images/services/1.jpg")
+
+    &.service_wedding-decor
+      .description
+        .photo
+          .photo__inner
+            background-image: url("../images/services/2.jpg")
+
+    &.service_wedding-bouquets
+      .description
+        .photo
+          .photo__inner
+            background-image: url("../images/services/3.jpg")
+
+    &.service_events
+      .description
+        .photo
+          .photo__inner
+            background-image: url("../images/services/4.jpg")
+
+    .gallery
+      height: 100%
+      &.out
+        opacity: 0
+
+        & .up,
+        & .down-inner
+          cursor: auto !important
+
+      & .photos
+        margin-top: 0
+        transition: margin-top $transition_duration ease
+
+        & .photo
+          background: none
+          box-shadow: none
+          height: 100vh
+          position: relative
+          box-sizing: border-box
+          border-bottom: (2 * $edge_width + 16) transparent solid
+
+          & .photo-inner
+            frame(true)
+
+          & .photo__image
+            width: 100%
+            height: 100%
+            position: relative
+
+        for $a in (1..$photos_count)
+          & .photo:nth-child({$a}) .photo__image
+            background-image: url("../images/photos/" $a "/1920x1680.jpg")
+            background-size: cover
+
+
+
+      & .arrows
+        position: absolute
+        top: 0
         left: 0
-        font-family: unquote($sec_font)
-        text-align: center
-        font-size: 1.7vw
-        margin-bottom: 4px
-        overflow: hidden
-        text-overflow: ellipsis
-        cursor: default
+        bottom: 0
+        right: 145px
+
+        z-index: 10
+
+        & .up,
+        & .down
+          height: 50%
+
+        & .up
+          cursor: url(../images/arrows/up.png), auto
 
 
+        & .down
+          position: relative
 
-    .photo:nth-child(1)
-      top: 23%
-      left: 25%
-
-      transform: rotateZ(-5deg) translateX(3%) translateZ(0)
-
-    .photo:nth-child(2)
-      top: 23%
-      left: 75%
-      margin-left: -23%
-
-      transform: rotateZ(3deg) translateX(3%) translateZ(0)
-
-    .photo:nth-child(3)
-      top: 78%
-      left: 25%
-
-      transform: rotateZ(7deg) translateX(3%) translateZ(0)
-
-    .photo:nth-child(4)
-      top: 78%
-      left: 75%
-      margin-left: -23%
-
-      transform: rotateZ(-5deg) translateX(3%) translateZ(0)
+        & .down-inner
+          content: ''
+          position: absolute
+          top: 0
+          left: 0
+          right: 0
+          bottom: 33px
+          cursor: url(../images/arrows/down.png), auto
 
 
 /* ======= contacts ======= */
@@ -594,7 +747,7 @@ frame($with_inner = true, $inner_selector = '&::after')
       margin-top: 7px
       display: inline-block
       vertical-align: middle
-      width: 65%
+      width: 60%
 
       .iconed_phone,
       .iconed_mail
@@ -658,7 +811,7 @@ frame($with_inner = true, $inner_selector = '&::after')
     & > div::after
       transform: rotate(-135deg)
       background: rgba($color, 0.4)
-  
+
 
 @keyframes border-glow
   from

@@ -12,6 +12,8 @@ var glob = require('glob');
 var _ = require('lodash');
 var borschik = require('gulp-borschik');
 var through = require('through');
+var through2 = require('through2');
+var browserify = require('gulp-browserify');
 
 
 var path = require('path');
@@ -36,7 +38,7 @@ gulp.task('upload', function () {
 });*/
 
 var paths = {
-    'js': { dir: 'app/js/', glob: 'app/js/*.js', build: 'app/.build/js' },
+    'js': { dir: 'app/js/', glob: 'app/js/custom/**/*.js', build: 'app/.build/js' },
     'lib': { dir: 'app/js/lib/', glob: 'app/js/lib/*.js', build: 'app/.build/js' },
     'styl': { dir: 'app/styl/', glob: 'app/styl/*.styl', build: 'app/.build/styl' },
     'jade': {
@@ -164,11 +166,12 @@ gulp.task('photos.json', function() {
 
         q.all(deferreds).done(function() {
             var jsoned = JSON.stringify(foldersArr);
-            //console.log('foldersArr: ' + jsoned);
+            var browserifyJsoned = 'module.exports=' + jsoned;
 
             writeFile(path.join(paths.photos.dir, 'photos.json'), jsoned).then(function() {
-                foldersDef.resolve();
-                //console.log('photos.json written');
+                writeFile(path.join(paths.js.dir + '/custom', 'photos.json'), browserifyJsoned).then(function() {
+                    foldersDef.resolve();
+                }, writeError);
             }, writeError);
         });
 
@@ -182,8 +185,8 @@ gulp.task('lib', function() {
         'app/bower_components/jquery/dist/jquery.min.js',
         'app/bower_components/es5-shim/es5-shim.min.js',
         'app/bower_components/lodash/dist/lodash.min.js',
-        'app/js/lib/finch.min.js',
-        'app/js/lib/bacon.jquery.js'
+        'app/bower_components/jade/runtime.js',
+        'app/js/lib/finch.min.js'
     ];
 
     return gulp.src(libs)
@@ -194,11 +197,11 @@ gulp.task('lib', function() {
 });
 
 gulp.task('js', ['lib', 'photos.json'], function() {
-    return gulp.src(paths.js.glob)
-        .pipe(borschik({minimize: false, tech: 'js'}))
+    return gulp.src(['app/js/custom/**/*.js', 'app/js/custom/photos.json'])
+        .pipe(browserify())
         /*.pipe(rename(function(path) {
-            path.basename = "_main";
-        }))*/
+         path.basename = "_main";
+         }))*/
         .pipe(gulp.dest(paths.js.build));
 });
 
@@ -275,15 +278,39 @@ function getPhotosJson() {
     return JSON.parse(fs.readFileSync(path.join(paths.photos.dir, 'photos.json'), {encoding: 'utf-8'}));
 }
 
-gulp.task('html', ['photos.json'], function() {
-    var photosObj = getPhotosJson();
-
-    return gulp.src(paths.jade.glob)
-        .pipe(jade({locals: {photos: photosObj}}))
+gulp.task('html', function() {
+    return gulp.src(paths.jade.dir + 'index.jade')
+        .pipe(jade())
         .pipe(gulp.dest('app/.build/'));
 });
 
-gulp.task('markup', ['images', 'js', 'css', 'html']);
+gulp.task('templates', function() {
+    function modify() {
+        function transform(file, enc, callback) {
+            if (!file.isBuffer()) {
+                this.push(file);
+                callback();
+                return;
+            }
+            var funcName = path.basename(file.path, '.js');
+            var from = 'function template(locals) {';
+            var to = 'function ' + funcName + '(locals) {';
+            var contents = file.contents.toString().replace(from, to);
+            file.contents = new Buffer(contents);
+            this.push(file);
+            callback();
+        }
+        return through2.obj(transform);
+    }
+
+    return gulp.src(paths.jade.dir + 'pages/*.jade')
+        .pipe(jade({client: true}))
+        .pipe(modify())
+        .pipe(concat('templates.js'))
+        .pipe(gulp.dest(paths.js.build));
+});
+
+gulp.task('markup', ['images', 'js', 'css', 'html', 'templates']);
 
 gulp.task('watch', function() {
     var photosWatchGlob = [paths.photos.dir + '/*', paths.photos.dir + '/**/*', '!' + paths.photos.dir + '/photos.json'];

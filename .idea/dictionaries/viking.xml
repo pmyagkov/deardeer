@@ -4,7 +4,9 @@
       <w>autoprefixer</w>
       <w>borschik</w>
       <w>concat</w>
+      <w>decls</w>
       <w>jsoned</w>
+      <w>keydown</w>
       <w>qutoprefixer</w>
       <w>styl</w>
     </words>

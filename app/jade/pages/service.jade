@@ -1,0 +1,42 @@
+.page.page_service
+    if (type == 'wedding-bouquets')
+        .service.service_wedding-bouquets
+            .description
+                .photo
+                    .photo__inner
+                    .caption Свадебные букеты
+            include ./gallery
+
+    if (type == 'wedding-decor')
+        .service.service_wedding-decor
+            .description
+                .photo
+                    .photo__inner
+                    .caption Свадебный декор
+            include ./gallery
+
+    if (type == 'bouquets')
+        .service.service_bouquets
+            .description
+                .photo
+                    .photo__inner
+                    .caption Букеты
+                .text
+                    p
+                        | Каждый букет – это увлекательная цветочная история, которую практически невозможно скопировать в точности. Именно поэтому этот раздел «Букеты» мы не делали в формате интернет-магазина, где можно в один момент заказать понравившуюся вещь.
+                    p
+                        | Букет же надо осознать, понять он изготавливается индивидуально по Вашему заказу и с Вашими пожеланиями, даже если вдохновил Вас один из букетов из наших Цветочных историй. (активная ссылка)
+                    p
+                        | Для индивидуального или корпоративного заказа букетов
+                        span.highlight  Dear&nbsp;Deer
+                        | просто позвоните или напишите нам, используя наиболее удобный для Вас способ со страницы&nbsp;
+                        a(href="#!contacts") «Контакты»
+            include ./gallery
+
+    if (type == 'events')
+        .service.service_events
+            .description
+                .photo
+                    .photo__inner
+                    .caption Мероприятия
+            include ./gallery

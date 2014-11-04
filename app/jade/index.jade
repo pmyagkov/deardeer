@@ -15,44 +15,39 @@ html
         .cover
         .aside
             a.logo(href='#!')
+                //.svg-wrapper
                 include ../images/logo.svg
 
             ul.navigation
-                li: a.anchor(href="#!") Цветочные истории
-                li: a.anchor(href="#!services") Услуги
+                //li: a.anchor(href="#!stories") Цветочные истории
+                li: a.anchor(href="#!") Услуги
                 li: a.anchor(href="#!about") О мастерской
                 li: a.anchor(href="#!contacts") Контакты
             .iconed.iconed_phone
                 .iconed__inner
                     .iconed__icon
                     .iconed__text
-                        span.sign.plus
-                            | +
+                        span.sign.plus +
                         | 7&nbsp;
-                        span.sign
-                            | (
+                        span.sign (
                         | 916
-                        span.sign
-                            | )
+                        span.sign )
                         | &nbsp;573
-                        span.sign
-                            | -
+                        span.sign -
                         | 98
-                        span.sign
-                            | -
+                        span.sign -
                         | 18
             .iconed.iconed_location
                 .iconed__inner
                     .iconed__icon
                     .iconed__text
                         | Москва, Зеленоград
-        .page.page_stub
+        //.page.page_stub
             .frame
                 .progress
                     div
 
 
-        block page
-
         script(type="text/javascript", src="js/lib/lib.js")
         script(type="text/javascript", src="js/main.js")
+        script(type="text/javascript", src="js/templates.js")
