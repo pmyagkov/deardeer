@@ -28,13 +28,13 @@
             this._mode = MODES.GALLERY;
 
             this.$node
-                .find('.thumbs').removeClass('semi-out').end()
+                .find('.thumbs-container').removeClass('semi-out').end()
                 .find('.description').addClass('out').end()
                 .find('.gallery').removeClass('out');
         } else {
             this._mode = MODES.DESCRIPTION;
             this.$node
-                .find('.thumbs').addClass('semi-out').end()
+                .find('.thumbs-container').addClass('semi-out').end()
                 .find('.description').removeClass('out').end()
                 .find('.gallery').addClass('out');
         }
@@ -44,15 +44,20 @@
      * Вычисляем размеры и количество превьюшек для галереи и сохраняем их в статические переменные
      */
     GalleryPage.prototype.calculateThumbs = function() {
-        var height = $('.cover').height();
+        var height = $('.cover').height() - 40 * 2; // высоты двух стрелок
         var $thumb = this.$node.find('.thumb:first');
         GalleryPage.thumbHeight = $thumb.outerHeight() +
             parseInt($thumb.css('margin-top')) +
             parseInt($thumb.css('margin-bottom'));
 
-        var $thumbs = $('.thumb');
+        var $thumbs = this.$node.find('.thumb');
         GalleryPage.thumbsPerRow = Math.floor(height / GalleryPage.thumbHeight);
         $thumbs.eq(GalleryPage.thumbsPerRow).addClass('transparent');
+
+        var $thumbsLi = $('.thumbs');
+        // двигаем список с фотографиями, чтобы был центрирован относительно рамка
+        var offsetTop = (height - GalleryPage.thumbsPerRow * GalleryPage.thumbHeight) / 2;
+        $thumbsLi.css('border-top-width', offsetTop);
 
         GalleryPage.thumbsNumber = $thumbs.length;
     };
@@ -101,8 +106,6 @@
         var marginTop = -next * 100;
         this.$node.find('.photos').css({'margin-top': marginTop + 'vh'});
 
-        console.log('marginTop', marginTop);
-
         // двигаем паралакс цветов
         var backgroundPosition = marginTop / 4;
         var $flowers = $('.flowers');
@@ -129,19 +132,22 @@
     };
 
     GalleryPage.prototype._onArrowClick = function(e) {
-        var direction = $(e.target).closest('.change').is('.down');
-        this.slideToPhoto(direction);
+        var $target = $(e.currentTarget);
+        var direction = $target.is('.down');
+        if ($target.is('.arrows_thumbs *')) {
+            var next = this._currentPhoto + (direction ? 1 : -1) * GalleryPage.thumbsPerRow;
+        } else {
+            next = direction;
+        }
+
+        this.slideToPhoto(next);
     };
 
     GalleryPage.prototype._onThumbClick = function(e) {
-        if (this._mode === MODES.DESCRIPTION) {
-            location.hash = '#!services/' + this.model.type + '/' + 'gallery';
-        } else {
-            var $target = $(e.target).closest('.thumb');
-            var photoId = Number($target.data('id'));
+        var $target = $(e.target).closest('.thumb');
+        var photoId = Number($target.data('id'));
 
-            this.slideToPhoto(photoId);
-        }
+        this.slideToPhoto(photoId);
     };
 
     GalleryPage.prototype.initState = function() {
@@ -164,16 +170,26 @@
     };
 
     GalleryPage.prototype.load = function() {
+        var params = {};
+
+        if (this._mode === MODES.GALLERY) {
+            params['gallery'] = true;
+        }
+
+        this.transform(params);
+
         this.super.prototype.load.call(this);
         this._bindEvents();
-        this.$node.find('.thumbs').removeClass('out');
+        this.$node.find('.thumbs-container').removeClass('out');
         this.$node.find('.thumbs > *:eq(0), .photos > *:eq(0)').addClass('current');
     };
 
     GalleryPage.prototype.unload = function() {
         this._unbindEvents();
-        this.$node.find('.thumbs').addClass('out');
+        this.$node.find('.thumbs-container').addClass('out');
         this.super.prototype.unload.call(this);
+
+        this.initState();
     };
 
 

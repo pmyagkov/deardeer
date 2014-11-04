@@ -4,11 +4,21 @@
             li.photo
                 .photo-inner
                     .photo__image
-    .arrows
+
+    .arrows.arrows_photo
         .up.change
         .down.change
             .down-inner
 
-ul.thumbs.out
-    - for(var i = 0; i < photos.length; i++)
-        li.thumb(data-id= i)
+
+.thumbs-container.out
+    a.placeholder(href="#!services/" + type + "/gallery")
+    .arrows.arrows_thumbs
+        .up.change
+        .down.change
+
+    ul.thumbs
+        - for(var i = 0; i < photos.length; i++)
+            li.thumb(data-id= i)
+
+
