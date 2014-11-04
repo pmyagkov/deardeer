@@ -1,0 +1,14 @@
+.gallery.out
+    ul.photos
+        - for(var i = 0; i < photos.length; i++)
+            li.photo
+                .photo-inner
+                    .photo__image
+    .arrows
+        .up.change
+        .down.change
+            .down-inner
+
+ul.thumbs.out
+    - for(var i = 0; i < photos.length; i++)
+        li.thumb(data-id= i)

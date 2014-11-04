@@ -1,27 +1,49 @@
 (function() {
-    /**
-     *
-     * @param {Object} options
-     * @param {String} options.id
-     * @param {Array} [options.model]
-     * @constructor
-     */
-    App.GalleryPage = function(options) {
-        this.super(options);
+    var Page = require('./page');
+
+    var MODES = {
+        'DESCRIPTION': 'description',
+        'GALLERY': 'gallery'
+    };
+
+    MODES.DEFAULT = MODES.DESCRIPTION;
+
+    var GalleryPage = function(params, model) {
+        this.super(params, model);
 
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onArrowClick = this._onArrowClick.bind(this);
         this._onThumbClick = this._onThumbClick.bind(this);
     };
 
-    App.GalleryPage.prototype = new App.Page();
-    App.GalleryPage.prototype.super = App.Page;
-    var GalleryPage = App.GalleryPage;
+    GalleryPage.prototype = new Page();
+    GalleryPage.prototype.super = Page;
+
+    GalleryPage.constructKey = function(pageId, params) {
+        return decodeURIComponent($.param(_.extend({id: pageId}, _.omit(params, 'gallery'))));
+    };
+
+    GalleryPage.prototype.transform = function(params) {
+        if (params['gallery']) {
+            this._mode = MODES.GALLERY;
+
+            this.$node
+                .find('.thumbs').removeClass('semi-out').end()
+                .find('.description').addClass('out').end()
+                .find('.gallery').removeClass('out');
+        } else {
+            this._mode = MODES.DESCRIPTION;
+            this.$node
+                .find('.thumbs').addClass('semi-out').end()
+                .find('.description').removeClass('out').end()
+                .find('.gallery').addClass('out');
+        }
+    };
 
     /**
      * Вычисляем размеры и количество превьюшек для галереи и сохраняем их в статические переменные
      */
-    App.GalleryPage.prototype.calculateThumbs = function() {
+    GalleryPage.prototype.calculateThumbs = function() {
         var height = $('.cover').height();
         var $thumb = this.$node.find('.thumb:first');
         GalleryPage.thumbHeight = $thumb.outerHeight() +
@@ -39,7 +61,7 @@
      * Переключает фотографию
      * @param {Number|Boolean} id 0-based index of the photo
      */
-    App.GalleryPage.prototype.slideToPhoto = function(id) {
+    GalleryPage.prototype.slideToPhoto = function(id) {
         // down
         var direction = true;
         var next;
@@ -57,7 +79,7 @@
             next = 0;
         }
 
-        var $thumbsList = $('.thumbs');
+        var $thumbsList = this.$node.find('.thumbs');
         var $thumbs = $thumbsList.find('> .thumb');
         // если текущая и следующая фотографии находятся в разных раскладках
         var rowNumber = Math.floor(next / GalleryPage.thumbsPerRow);
@@ -77,8 +99,12 @@
         this._currentPhoto = next;
 
         var marginTop = -next * 100;
+        this.$node.find('.photos').css({'margin-top': marginTop + 'vh'});
+
+        console.log('marginTop', marginTop);
+
+        // двигаем паралакс цветов
         var backgroundPosition = marginTop / 4;
-        $('.stories').css({'margin-top': marginTop + 'vh'});
         var $flowers = $('.flowers');
         $flowers.filter('.flowers_front').css({'background-position': '0 ' + backgroundPosition + 'vh'});
         $flowers.filter('.flowers_middle').css({'background-position': '0 ' + (backgroundPosition / 2) + 'vh'});
@@ -87,7 +113,7 @@
         $thumbs.removeClass('current').filter('[data-id=' + next + ']').addClass('current');
     };
 
-    App.GalleryPage.prototype._onKeyDown = function(e) {
+    GalleryPage.prototype._onKeyDown = function(e) {
         switch(e.which) {
         case 40:
             // go down
@@ -102,47 +128,66 @@
         }
     };
 
-    App.GalleryPage.prototype._onArrowClick = function(e) {
+    GalleryPage.prototype._onArrowClick = function(e) {
         var direction = $(e.target).closest('.change').is('.down');
         this.slideToPhoto(direction);
     };
 
-    App.GalleryPage.prototype._onThumbClick = function(e) {
-        var $target = $(e.target).closest('.thumb');
-        var photoId = Number($target.data('id'));
+    GalleryPage.prototype._onThumbClick = function(e) {
+        if (this._mode === MODES.DESCRIPTION) {
+            location.hash = '#!services/' + this.model.type + '/' + 'gallery';
+        } else {
+            var $target = $(e.target).closest('.thumb');
+            var photoId = Number($target.data('id'));
 
-        this.slideToPhoto(photoId);
-    };
-
-    App.GalleryPage.prototype.init = function() {
-        if (!this._inited) {
-            this._currentPhoto = 0;
-            this.calculateThumbs();
+            this.slideToPhoto(photoId);
         }
-
-        this.super.prototype.init.call(this);
     };
 
-    App.GalleryPage.prototype.load = function() {
+    GalleryPage.prototype.initState = function() {
+        this._mode = MODES.DEFAULT;
+        this._currentPhoto = 0;
+
+        this.$node.find('.thumbs > *, .photos > *').removeClass('current');
+
+        this.calculateThumbs();
+    };
+
+    GalleryPage.prototype.init = function() {
+        if (!this._inited) {
+            this.super.prototype.init.call(this);
+
+            this.initState();
+
+            this.transform(this.params);
+        }
+    };
+
+    GalleryPage.prototype.load = function() {
         this.super.prototype.load.call(this);
         this._bindEvents();
+        this.$node.find('.thumbs').removeClass('out');
+        this.$node.find('.thumbs > *:eq(0), .photos > *:eq(0)').addClass('current');
     };
 
-    App.GalleryPage.prototype.unload = function() {
+    GalleryPage.prototype.unload = function() {
         this._unbindEvents();
+        this.$node.find('.thumbs').addClass('out');
         this.super.prototype.unload.call(this);
     };
 
 
-    App.GalleryPage._bindEvents = function() {
+    GalleryPage.prototype._bindEvents = function() {
         $('.arrows .change').click(this._onArrowClick);
         $('.thumbs').on('click', '.thumb', this._onThumbClick);
         $(document).keydown(this._onKeyDown);
     };
-    App.GalleryPage._unbindEvents = function() {
+    GalleryPage.prototype._unbindEvents = function() {
         $('.arrows .change').off('click', this._onArrowClick);
         $('.thumbs').off('click', '.thumb', this._onThumbClick);
         $(document).off('keydown', this._onKeyDown);
     };
+
+    module.exports = GalleryPage;
 
 })();

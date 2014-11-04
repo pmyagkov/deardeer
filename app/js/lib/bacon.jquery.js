@@ -146,8 +146,6 @@
 		// Split each textNode into individual textNodes, one for each
 		// word
 		textNodes.each(function (index, lastNode) {
-            debugger;
-
 			var startOfWord = /\W\b/,
 				result;
 			while (startOfWord.exec(lastNode.nodeValue) !== null) {

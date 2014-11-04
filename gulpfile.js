@@ -166,11 +166,12 @@ gulp.task('photos.json', function() {
 
         q.all(deferreds).done(function() {
             var jsoned = JSON.stringify(foldersArr);
-            //console.log('foldersArr: ' + jsoned);
+            var browserifyJsoned = 'module.exports=' + jsoned;
 
             writeFile(path.join(paths.photos.dir, 'photos.json'), jsoned).then(function() {
-                foldersDef.resolve();
-                //console.log('photos.json written');
+                writeFile(path.join(paths.js.dir + '/custom', 'photos.json'), browserifyJsoned).then(function() {
+                    foldersDef.resolve();
+                }, writeError);
             }, writeError);
         });
 
@@ -195,22 +196,12 @@ gulp.task('lib', function() {
         .pipe(gulp.dest(path.join(paths.js.build, 'lib')));
 });
 
-gulp.task('js2', ['lib', 'photos.json'], function() {
-    return gulp.src('app/js/custom/main.js')
-        .pipe(borschik({minimize: false, tech: 'js'}))
+gulp.task('js', ['lib', 'photos.json'], function() {
+    return gulp.src(['app/js/custom/**/*.js', 'app/js/custom/photos.json'])
         .pipe(browserify())
         /*.pipe(rename(function(path) {
          path.basename = "_main";
          }))*/
-        .pipe(gulp.dest(paths.js.build));
-});
-
-gulp.task('js', ['lib', 'photos.json'], function() {
-    return gulp.src(paths.js.glob)
-        .pipe(borschik({minimize: false, tech: 'js'}))
-        /*.pipe(rename(function(path) {
-            path.basename = "_main";
-        }))*/
         .pipe(gulp.dest(paths.js.build));
 });
 
@@ -319,7 +310,7 @@ gulp.task('templates', function() {
         .pipe(gulp.dest(paths.js.build));
 });
 
-gulp.task('markup', ['images', 'js', 'css', 'html']);
+gulp.task('markup', ['images', 'js', 'css', 'html', 'templates']);
 
 gulp.task('watch', function() {
     var photosWatchGlob = [paths.photos.dir + '/*', paths.photos.dir + '/**/*', '!' + paths.photos.dir + '/photos.json'];

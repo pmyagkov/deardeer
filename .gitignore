@@ -3,9 +3,7 @@ node_modules
 dist
 .tmp
 .sass-cache
-.idea/
-.idea/*.xml
-.idea/workspace.xml
+.idea
 app/bower_components
 test/bower_components
 app/js/_*.js

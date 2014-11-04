@@ -1,6 +1,6 @@
 (function() {
-    App.StoriesPage = function(options) {
-        this.super(options);
+    /*App.StoriesPage = function(params, model) {
+        this.super(params, model);
     };
 
     App.StoriesPage.prototype = new App.Page();
@@ -18,5 +18,5 @@
         this.$node.find('.thumbs').addClass('out').end()
             .addClass('transparent');
     };
-
+*/
 })();
