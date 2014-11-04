@@ -301,6 +301,8 @@ frame($with_inner = true, $inner_selector = '&::after')
 
     & .placeholder
       display: block
+    & .arrows
+      display: none
 
   & .placeholder
     position: absolute
@@ -402,6 +404,21 @@ frame($with_inner = true, $inner_selector = '&::after')
   &.with-transition
     transition: opacity 0.5s ease
 
+.text
+  font-family: unquote($main_font);
+  line-height: 1.6
+  white-space: normal
+  font-size: 1.3em
+  //text-align: justify
+
+  & .highlight
+    font-size:  1.2em
+
+  p
+    margin: 0 0 5px 0
+
+    &::first-letter
+      font-size:  1.4em
 
 /* ==== about ==== */
 .page_about
@@ -451,24 +468,10 @@ frame($with_inner = true, $inner_selector = '&::after')
 
 
     .text
-      font-family: unquote($main_font);
-      line-height: 1.6
-      white-space: normal
-      font-size: 1.3em
-      //text-align: justify
       margin: 10px 60px 0 0
       position: relative
       z-index: 0
       left: 30px
-
-      & .highlight
-        font-size:  1.2em
-
-      p
-        margin: 0 0 5px 0
-
-        &::first-letter
-          font-size:  1.4em
 
 photo()
   .photo
@@ -499,7 +502,6 @@ photo()
       margin-bottom: 4px
       overflow: hidden
       text-overflow: ellipsis
-      cursor: pointer
 
 photo-common-props()
   position: absolute
@@ -611,7 +613,7 @@ photo4-props($need_transform = true)
       .photo
         display: block
         float: left
-        margin: 0 5% 5% 0
+        margin: 0 5% 0 0
 
       .text
         white-space: normal
@@ -654,6 +656,8 @@ photo4-props($need_transform = true)
         & .up,
         & .down-inner
           cursor: auto !important
+        & .arrows
+            display: none
 
       & .photos
         margin-top: 0
