@@ -110,11 +110,14 @@ frame($with_inner = true, $inner_selector = '&::after')
     position: absolute
 
 .transparent
-  opacity: 0 !important
+  // FIXME: временно просто убираем скрытые страницы, чтобы не мешать рендерингу видимой
+  display: none !important
+  //opacity: 0 !important
   // спрятанные слои не должны влиять на скролл показанного
-  overflow: hidden
-  z-index: -1
-  position: relative
+  //overflow: hidden
+  //z-index: -1
+  //position: relative
+
 
 .flowers
   position: fixed
