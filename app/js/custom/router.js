@@ -4,7 +4,6 @@
 
     var Router = {};
     var routes = {
-        '!stories': 'stories',
         '/': 'services',
         '!': 'services',
         '!services/:type': 'service',
@@ -12,45 +11,22 @@
         '!about': 'about',
         '!contacts': 'contacts'
     };
-/*
-    console.log('Renderring page "' + next.id + '"');
 
-    var stub = App._getPage('stub');
-    stub.init();
+    function setCurrentNav(page) {
+        var className;
+        switch (page.id) {
+            case 'services':
+            case 'service':
+                className = 'services';
+                break;
 
-    var def = $.Deferred().resolve();
-
-    next.init(App._rootObj);
-
-    if (App.pages.current) {
-        if (next.id === App.pages.current.id) {
-            return;
+            default:
+                className = page.id;
+                break;
         }
 
-        if (_.isFunction(App.pages.current.unload)) {
-            def = App.pages.current.unload(next);
-        }
+        $('.navigation li').removeClass('current').filter('.' + className).addClass('current');
     }
-
-    if (!def || !def.then) {
-        def = $.Deferred().resolve(def).promise();
-    }
-
-    App.pages.current = next;
-    def.then(function() {
-        var def;
-        if (_.isFunction(next.load)) {
-            def = next.load();
-        }
-
-        if (!def || !def.then) {
-            def = $.Deferred().resolve(def);
-        }
-
-        return def.promise();
-    }).then(function() {
-        stub.unload();
-    });*/
 
     function goto(nextPageId, params) {
         console.log('Rendering page', nextPageId, 'with params', params);
@@ -59,7 +35,6 @@
         next.init();
 
         var def = vow.resolve();
-
 
         // если страница та же самая, то не нужно выгружать ту и загружать эту
         if (Router._currentPage === next) {
@@ -77,6 +52,9 @@
         }
 
         Router._currentPage = next;
+
+        // FIXME: перевести на события – роутер ничего не должен знать про разметку
+        setCurrentNav(next);
 
         def.then(function() {
             var promise = vow.resolve();

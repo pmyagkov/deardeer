@@ -172,7 +172,8 @@ frame($with_inner = true, $inner_selector = '&::after')
     transform-origin: right
     transition: transform 0.3s ease 0s, opacity 0.3s ease 0s
 
-  &:hover:before
+  &:hover:before,
+  .current &:before
     opacity: 1
     transform: rotateZ(0deg) scale(1) translateZ(0)
 
