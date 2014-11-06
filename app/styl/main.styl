@@ -110,13 +110,14 @@ frame($with_inner = true, $inner_selector = '&::after')
     position: absolute
 
 .transparent
+  opacity: 0 !important
+  // спрятанные слои не должны влиять на скролл показанного
+  overflow: hidden
+  z-index: -1
+  position: relative
+.hidden
   // FIXME: временно просто убираем скрытые страницы, чтобы не мешать рендерингу видимой
   display: none !important
-  //opacity: 0 !important
-  // спрятанные слои не должны влиять на скролл показанного
-  //overflow: hidden
-  //z-index: -1
-  //position: relative
 
 
 .flowers
@@ -479,7 +480,7 @@ frame($with_inner = true, $inner_selector = '&::after')
 photo()
   .photo
     width: 0
-    padding: 35% 0 0 43%
+    padding: 27% 0 0 33%
     box-sizing: border-box
 
     .photo__inner
@@ -501,7 +502,7 @@ photo()
       left: 0
       font-family: unquote($sec_font)
       text-align: center
-      font-size: 1.7vw
+      font-size: 1.5vw
       margin-bottom: 4px
       overflow: hidden
       text-overflow: ellipsis
@@ -533,6 +534,7 @@ photo3-props($need_transform = true)
   photo-common-props()
   top: 78%
   left: 25%
+  margin-top: -14%
   if ($need_transform)
     transform: rotateZ(7deg) translateX(3%) translateZ(0)
   else
@@ -543,6 +545,7 @@ photo4-props($need_transform = true)
   top: 78%
   left: 75%
   margin-left: -23%
+  margin-top: -14%
   if ($need_transform)
     transform: rotateZ(-5deg) translateX(3%) translateZ(0)
   else
@@ -574,10 +577,10 @@ photo4-props($need_transform = true)
     & .photo
       cursor: pointer
       transition: transform .5s ease
-/*
+
       &:hover
         transform: rotateZ(0)
-*/
+        opacity: 1
 
 
 

@@ -155,6 +155,12 @@
         this._currentPhoto = 0;
 
         this.$node.find('.thumbs > *, .photos > *').removeClass('current');
+        // возвращаем маниатюры в исходное состояния
+        this.$node.find('.thumbs').css('margin-top', 0)
+            .find('> li').removeClass('transparent')
+            .eq(GalleryPage.thumbsPerRow).addClass('transparent');
+
+        this.$node.find('.photos').css('margin-top', 0);
 
         this.calculateThumbs();
     };

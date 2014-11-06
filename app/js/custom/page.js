@@ -29,18 +29,18 @@
         if (_.isFunction(window[this.id])) {
             this.$node = $(window[this.id](_.extend(this.model, this.params)))
                 .appendTo($('body'))
-                .addClass('transparent');
+                .addClass('hidden');
         } else {
             console.error('Can\'t construct page. There is neither a node in html nor a template constructor');
         }
     };
 
     Page.prototype.load = function load() {
-        this.$node.addClass('with-transition').removeClass('transparent');
+        this.$node.addClass('with-transition').removeClass('hidden');
     };
 
     Page.prototype.unload = function unload() {
-        this.$node.removeClass('with-transition').addClass('transparent');
+        this.$node.removeClass('with-transition').addClass('hidden');
     };
 
     module.exports = Page;
